@@ -38,10 +38,10 @@ const ActionPanel: React.FC<ActionPanelProps> = ({ confirmedResponses }) => {
       <p className="text-gray-400 mb-6 text-sm">
         Partilhe o link para que outros respondam ou exporte a lista de confirmados.
       </p>
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col gap-4">
         <button
           onClick={handleShare}
-          className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200"
+          className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200"
         >
           <ShareIcon />
           {shareText}
@@ -49,7 +49,7 @@ const ActionPanel: React.FC<ActionPanelProps> = ({ confirmedResponses }) => {
         <button
           onClick={handleExport}
           disabled={confirmedResponses.length === 0}
-          className="flex-1 flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 disabled:bg-gray-500 disabled:cursor-not-allowed"
+          className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 disabled:bg-gray-500 disabled:cursor-not-allowed"
         >
           <DownloadIcon />
           Exportar Lista
