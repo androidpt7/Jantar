@@ -1,2 +1,8 @@
-// Este ficheiro foi intencionalmente deixado em branco.
-// Todo o código foi movido para um script inline no `index.html`.
+
+export interface Submission {
+  id: number;
+  created_at: string;
+  name: string;
+  isAttending: boolean;
+  selectedDate: string | null;
+}

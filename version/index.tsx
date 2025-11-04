@@ -1,2 +1,14 @@
-// Este ficheiro foi intencionalmente deixado em branco.
-// Todo o código foi movido para um script inline no `index.html` para facilitar a publicação em serviços como o Netlify Drop.
+
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import './index.css'; // Importaremos os estilos globais aqui
+
+const rootElement = document.getElementById('root');
+if (rootElement) {
+  ReactDOM.createRoot(rootElement).render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );
+}
