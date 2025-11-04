@@ -61,7 +61,7 @@ const RsvpForm: React.FC<RsvpFormProps> = ({ onSubmit, findResponse }) => {
 
   return (
     <>
-      <h2 className="text-2xl font-bold text-green-400 mb-6">Confirme sua Presença</h2>
+      <h2 className="text-2xl font-bold text-green-400 mb-6">Confirme a sua Presença</h2>
       <form onSubmit={handleSubmit} className="flex flex-col flex-grow">
         <div className="mb-6">
           <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">

@@ -4,6 +4,7 @@ import RsvpForm from './components/RsvpForm';
 import ResponseList from './components/ResponseList';
 import ActionPanel from './components/ActionPanel';
 import ConfirmationModal from './components/ConfirmationModal';
+import RestaurantPanel from './components/RestaurantPanel';
 import { supabase } from './supabaseClient';
 
 const Snowflakes: React.FC = () => {
@@ -101,6 +102,7 @@ const App: React.FC = () => {
             {error && <p className="text-red-400 text-center bg-[#1f2937] p-3 rounded-lg">{error}</p>}
             <ResponseList responses={responses} loading={loading} />
             <ActionPanel confirmedResponses={confirmedResponses} />
+            <RestaurantPanel />
           </div>
         </main>
       </div>
