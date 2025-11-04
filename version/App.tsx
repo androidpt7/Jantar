@@ -90,7 +90,7 @@ const App: React.FC = () => {
         </header>
 
         <main className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="bg-[#1f2937] p-6 rounded-2xl shadow-lg border border-gray-700 h-full flex flex-col">
+          <div className="bg-[#1f2937] p-6 rounded-2xl shadow-lg border border-gray-700 flex flex-col">
             {showConfirmation ? (
               <ConfirmationModal onClose={handleCloseConfirmation} />
             ) : (

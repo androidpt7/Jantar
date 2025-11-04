@@ -6,7 +6,7 @@ interface ConfirmationModalProps {
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ onClose }) => {
   return (
-    <div className="flex flex-col items-center justify-center h-full text-center">
+    <div className="flex flex-col items-center justify-center text-center min-h-[350px]">
       <h2 className="text-3xl font-bold text-green-400 mb-3">
         Obrigado por responder!
       </h2>
