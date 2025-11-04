@@ -1,0 +1,17 @@
+# Configuração de build para a Netlify
+[build]
+  # Comando que a Netlify executará para construir o seu site.
+  # "npm run build" executa o script definido no seu package.json.
+  command = "npm run build"
+  
+  # Diretório que será publicado. O Vite gera a pasta "dist" por padrão.
+  publish = "dist/"
+
+# Regra de redirecionamento para Single Page Applications (SPA)
+# Isto garante que, se um usuário atualizar a página em uma rota como /perfil,
+# ele não receberá um erro 404. Em vez disso, o Netlify servirá o index.html,
+# permitindo que o roteador do React assuma o controle da navegação.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

@@ -1,11 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Em projetos Vite, as variáveis de ambiente do lado do cliente são acedidas através de `import.meta.env`
-// FIX: Cast `import.meta` to `any` to access the `env` property. This is a workaround for the TypeScript error "Property 'env' does not exist on type 'ImportMeta'", which occurs when Vite's client types are not configured.
-const supabaseUrl = (import.meta as any).env.VITE_SUPABASE_URL as string;
-const supabaseKey = (import.meta as any).env.VITE_SUPABASE_KEY as string;
+// The execution environment provides environment variables through `process.env`.
+// Using `import.meta.env` is specific to Vite's dev server and build process,
+// and it seems it's not available here, causing the application to crash.
+// We are reverting to `process.env` which is the standard way this platform
+// exposes secrets.
+const supabaseUrl = process.env.VITE_SUPABASE_URL as string;
+const supabaseKey = process.env.VITE_SUPABASE_KEY as string;
 
 if (!supabaseUrl || !supabaseKey) {
+  // This error will be thrown if the variables are not configured correctly in your hosting environment (e.g., Netlify).
+  // Please double-check that VITE_SUPABASE_URL and VITE_SUPABASE_KEY are set.
   throw new Error("Supabase URL and Key must be defined in environment variables (VITE_SUPABASE_URL, VITE_SUPABASE_KEY)");
 }
 

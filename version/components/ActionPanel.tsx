@@ -1,13 +1,13 @@
-
 import React, { useState } from 'react';
 import ShareIcon from './icons/ShareIcon';
 import DownloadIcon from './icons/DownloadIcon';
+import { RsvpResponse } from '../types';
 
 interface ActionPanelProps {
-  confirmedGuests: string[];
+  confirmedResponses: RsvpResponse[];
 }
 
-const ActionPanel: React.FC<ActionPanelProps> = ({ confirmedGuests }) => {
+const ActionPanel: React.FC<ActionPanelProps> = ({ confirmedResponses }) => {
   const [shareText, setShareText] = useState('Partilhar Link');
 
   const handleShare = () => {
@@ -18,10 +18,10 @@ const ActionPanel: React.FC<ActionPanelProps> = ({ confirmedGuests }) => {
   };
 
   const handleExport = () => {
-    if (confirmedGuests.length === 0) return;
+    if (confirmedResponses.length === 0) return;
     const csvContent = "data:text/csv;charset=utf-8," 
-      + "Nome dos Confirmados\n" 
-      + confirmedGuests.join("\n");
+      + "Nome,Data Preferida\n" 
+      + confirmedResponses.map(r => `${r.name},${r.preferred_date}`).join("\n");
     
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
@@ -34,7 +34,7 @@ const ActionPanel: React.FC<ActionPanelProps> = ({ confirmedGuests }) => {
 
   return (
     <div className="bg-[#1f2937] p-6 rounded-2xl shadow-lg border border-gray-700">
-      <h2 className="text-2xl font-bold text-teal-400 mb-4">Ações do Painel</h2>
+      <h2 className="text-2xl font-bold text-green-400 mb-4">Ações do Painel</h2>
       <p className="text-gray-400 mb-6 text-sm">
         Partilhe o link para que outros respondam ou exporte a lista de confirmados.
       </p>
@@ -48,7 +48,7 @@ const ActionPanel: React.FC<ActionPanelProps> = ({ confirmedGuests }) => {
         </button>
         <button
           onClick={handleExport}
-          disabled={confirmedGuests.length === 0}
+          disabled={confirmedResponses.length === 0}
           className="flex-1 flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 disabled:bg-gray-500 disabled:cursor-not-allowed"
         >
           <DownloadIcon />
