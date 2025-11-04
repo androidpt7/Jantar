@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { RsvpResponse } from '../types';
+import SearchIcon from './icons/SearchIcon';
 
 interface ResponseListProps {
   responses: RsvpResponse[];
@@ -7,6 +8,13 @@ interface ResponseListProps {
 }
 
 const ResponseList: React.FC<ResponseListProps> = ({ responses, loading }) => {
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredResponses = responses.filter(response =>
+    response.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const renderContent = () => {
     if (loading) {
       return (
@@ -23,10 +31,18 @@ const ResponseList: React.FC<ResponseListProps> = ({ responses, loading }) => {
         </div>
       );
     }
+
+    if (searchQuery && filteredResponses.length === 0) {
+      return (
+        <div className="flex-grow flex items-center justify-center">
+          <p className="text-gray-400 text-center">Nenhum nome encontrado.</p>
+        </div>
+      );
+    }
     
     return (
       <div className="flex-grow overflow-y-auto pr-2 -mr-2 space-y-3" style={{maxHeight: '280px'}}>
-        {responses.map((response) => (
+        {filteredResponses.map((response) => (
           <div 
             key={response.id || response.name} 
             className={`p-4 rounded-xl flex items-center justify-between shadow-lg ${
@@ -61,7 +77,30 @@ const ResponseList: React.FC<ResponseListProps> = ({ responses, loading }) => {
   
   return (
     <div className="bg-[#1f2937] p-6 rounded-2xl shadow-lg border border-gray-700 flex-grow flex flex-col">
-      <h2 className="text-2xl font-bold text-green-400 mb-4">Lista de Respostas</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-bold text-green-400">Lista de Respostas</h2>
+        <button 
+          onClick={() => setIsSearchVisible(!isSearchVisible)}
+          className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
+          aria-label="Pesquisar nome"
+        >
+          <SearchIcon />
+        </button>
+      </div>
+
+      {isSearchVisible && (
+        <div className="mb-4">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Pesquisar nome..."
+            className="w-full bg-[#374151] border border-gray-600 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
+            autoFocus
+          />
+        </div>
+      )}
+
       {renderContent()}
     </div>
   );
