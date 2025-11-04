@@ -38,11 +38,10 @@
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- Adicionar import map para Gemini API e Supabase -->
+    <!-- Adicionar import map para Supabase -->
     <script type="importmap">
     {
       "imports": {
-        "@google/genai": "https://esm.run/@google/generative-ai",
         "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
       }
     }
@@ -54,26 +53,27 @@
 
     <script type="text/babel" data-type="module">
       // --- IMPORTAÇÕES ---
-      import { GoogleGenerativeAI } from "@google/genai";
       import { createClient } from "@supabase/supabase-js";
+      
+      // --- CONFIGURAÇÃO DO SUPABASE ---
+      // As credenciais do Supabase são carregadas a partir de variáveis globais (window.SUPABASE_URL, window.SUPABASE_KEY).
+      // Esta é a forma recomendada para usar as variáveis de ambiente do Netlify com um site estático.
+      // Para que isto funcione, deve configurar o "Snippet Injection" no seu painel do Netlify.
+      // ------------------------------------
 
       // --- INICIALIZAÇÃO DOS CLIENTES ---
-      let ai;
       let supabase;
       let configError = null;
 
       try {
-        // A API Key é obtida a partir das variáveis de ambiente do projeto.
-        if (!process.env.API_KEY) {
-            throw new Error("A API Key do Gemini não foi encontrada. Por favor, configure a variável de ambiente API_KEY.");
+        const supabaseUrl = window.SUPABASE_URL;
+        const supabaseKey = window.SUPABASE_KEY;
+
+        // Verifica se as variáveis foram injetadas pelo Netlify.
+        if (!supabaseUrl || !supabaseKey || supabaseUrl.includes("{{")) {
+            throw new Error("As credenciais do Supabase não foram encontradas. Por favor, configure as variáveis de ambiente SUPABASE_URL e SUPABASE_KEY no Netlify e ative a 'Snippet Injection' nas configurações do seu site.");
         }
-        ai = new GoogleGenerativeAI({apiKey: process.env.API_KEY});
-        
-        // As credenciais do Supabase são obtidas a partir das variáveis de ambiente.
-        if (!process.env.SUPABASE_URL || !process.env.SUPABASE_KEY) {
-            throw new Error("As credenciais do Supabase não foram encontradas. Por favor, configure as variáveis de ambiente SUPABASE_URL e SUPABASE_KEY.");
-        }
-        supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+        supabase = createClient(supabaseUrl, supabaseKey);
 
       } catch (error) {
         console.error("Erro na inicialização:", error.message);
@@ -260,103 +260,6 @@
           </div>
         );
       };
-
-      const SummaryDisplay = ({ submissions }) => {
-        const [summary, setSummary] = React.useState('');
-        const [isGenerating, setIsGenerating] = React.useState(false);
-        const [error, setError] = React.useState('');
-        
-        const generateSummary = async () => {
-          if (!ai) {
-              setError("O cliente Gemini AI não está inicializado.");
-              return;
-          }
-          if (submissions.length === 0) {
-              setError("Não há respostas para resumir.");
-              setTimeout(() => setError(''), 3000);
-              return;
-          }
-
-          setIsGenerating(true);
-          setError('');
-          setSummary('');
-
-          try {
-            const attendees = submissions.filter(s => s.isAttending);
-            const nonAttendees = submissions.filter(s => !s.isAttending);
-            const dateVotes = attendees.reduce((acc, curr) => {
-                if (curr.selectedDate) {
-                    acc[curr.selectedDate] = (acc[curr.selectedDate] || 0) + 1;
-                }
-                return acc;
-            }, {});
-
-            const prompt = `
-              Você é um assistente de planeamento de festas de Natal, amigável e festivo.
-              Analise a seguinte lista de convidados para um jantar de Natal e crie um resumo.
-              
-              Dados dos Convidados:
-              - Total de convidados que responderam: ${submissions.length}
-              - Confirmados (${attendees.length}): ${attendees.map(p => p.name).join(', ') || 'Nenhum'}
-              - Não vão (${nonAttendees.length}): ${nonAttendees.map(p => p.name).join(', ') || 'Nenhum'}
-              - Votos por data: ${JSON.stringify(dateVotes)}
-
-              O seu resumo deve:
-              1. Começar com uma saudação natalícia.
-              2. Indicar o número total de pessoas que confirmaram presença e as que não vão.
-              3. Anunciar a data mais votada para o jantar. Se houver um empate ou nenhuma votação, mencione isso.
-              4. Terminar com uma nota alegre.
-              
-              Seja conciso e use emojis de Natal.
-            `;
-            
-            const response = await ai.models.generateContent({
-                model: "gemini-2.5-flash",
-                contents: prompt,
-            });
-
-            setSummary(response.text);
-
-          } catch (err) {
-            console.error("Erro ao gerar resumo com Gemini:", err);
-            setError("Houve um problema ao contactar a IA. Tente novamente.");
-          } finally {
-            setIsGenerating(false);
-          }
-        };
-
-        const renderSummary = (text) => {
-            return text.split('\n').map((line, index) => {
-                if (line.trim() === '') return null;
-                if (line.trim().startsWith('* ') || line.trim().startsWith('- ')) {
-                    return <p key={index} className="ml-4">{line}</p>;
-                }
-                return <p key={index} className="mb-2">{line}</p>;
-            }).filter(Boolean);
-        };
-
-        return (
-          <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-lg border border-white/20">
-            <h2 className="text-2xl font-bold text-center text-green-300 mb-4">Resumo da IA 🎄</h2>
-            <div className="text-gray-300 text-center space-y-2 mb-6">
-                <p>Peça à nossa IA para analisar as respostas e criar um resumo rápido do plano!</p>
-            </div>
-            <button
-              onClick={generateSummary}
-              disabled={isGenerating || submissions.length === 0}
-              className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-purple-800 disabled:cursor-wait text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300 flex items-center justify-center"
-            >
-              {isGenerating ? 'A IA está a pensar...' : 'Gerar Resumo com IA'}
-            </button>
-            {error && <p className="text-red-400 text-sm text-center mt-4">{error}</p>}
-            {summary && (
-                <div className="mt-6 p-4 bg-gray-900/50 rounded-lg border border-gray-600">
-                    <div className="text-gray-200">{renderSummary(summary)}</div>
-                </div>
-            )}
-          </div>
-        );
-      };
       
       const ShareButton = () => {
         const [buttonText, setButtonText] = React.useState('Partilhar Link');
@@ -444,7 +347,7 @@
         };
 
         useEffect(() => {
-          fetchSubmissions();
+          if(supabase) fetchSubmissions();
         }, []);
 
         const handleSubmission = async (submission) => {
@@ -475,6 +378,10 @@
           }
         };
 
+        if (configError) {
+          return null; // A renderização do erro já é tratada no final do script
+        }
+
         return (
           <div className="min-h-screen bg-gray-900 text-white relative overflow-hidden">
             <div className="absolute inset-0 z-0">
@@ -501,7 +408,6 @@
                 </div>
                 <div className="space-y-8">
                   <SubmissionsList submissions={submissions} isLoading={isLoading} error={error}/>
-                  <SummaryDisplay submissions={submissions} />
                    <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-lg border border-white/20">
                     <h2 className="text-2xl font-bold text-center text-green-300 mb-4">Ações do Painel</h2>
                     <div className="text-gray-300 text-center space-y-2">
@@ -526,7 +432,7 @@
                   <div class="text-center max-w-2xl">
                       <h1 class="text-3xl font-bold">Erro de Configuração</h1>
                       <p class="mt-4">${configError}</p>
-                      <p class="mt-6 text-sm text-gray-300">Por favor, verifique as variáveis de ambiente do seu projeto.</p>
+                      <p class="mt-6 text-sm text-gray-300">Por favor, siga as instruções no seu painel do Netlify para configurar as credenciais.</p>
                   </div>
               </div>
           `;
