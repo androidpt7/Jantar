@@ -7,16 +7,18 @@ import { supabase } from './supabaseClient';
 
 const Snowflakes: React.FC = () => {
   const flakes = Array.from({ length: 50 }).map((_, i) => {
-      const style = {
-          left: `${Math.random() * 100}vw`,
-          top: `${Math.random() * 100}vh`,
-          transform: `scale(${Math.random() * 0.5 + 0.5})`,
-          opacity: Math.random() * 0.5 + 0.3,
-      };
-      return <div key={i} className="absolute text-gray-400 text-xl" style={style}>*</div>;
+    const style = {
+      left: `${Math.random() * 100}vw`,
+      opacity: Math.random() * 0.7 + 0.3,
+      fontSize: `${Math.random() * 10 + 10}px`,
+      animationDuration: `${Math.random() * 10 + 10}s`,
+      animationDelay: `${Math.random() * 5}s`,
+    };
+    return <div key={i} className="snowflake" style={style}>❄</div>;
   });
   return <div className="fixed inset-0 pointer-events-none z-0" aria-hidden="true">{flakes}</div>;
 };
+
 
 const App: React.FC = () => {
   const [responses, setResponses] = useState<RsvpResponse[]>([]);
@@ -83,7 +85,7 @@ const App: React.FC = () => {
           <RsvpForm onSubmit={handleRsvpSubmit} findResponse={findResponseByName} />
           <div className="flex flex-col gap-8">
             {error && <p className="text-red-400 text-center bg-[#1f2937] p-3 rounded-lg">{error}</p>}
-            <ResponseList confirmedResponses={confirmedResponses} loading={loading} />
+            <ResponseList responses={responses} loading={loading} />
             <ActionPanel confirmedResponses={confirmedResponses} />
           </div>
         </main>

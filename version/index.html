@@ -12,9 +12,26 @@
     <style>
       body {
         font-family: 'Inter', sans-serif;
+        overflow-x: hidden;
       }
       .font-christmas {
         font-family: 'Mountains of Christmas', cursive;
+      }
+      @keyframes fall {
+        0% { transform: translateY(-10vh) translateX(0); }
+        100% { transform: translateY(110vh) translateX(15px); }
+      }
+      .snowflake {
+        position: fixed;
+        top: -10vh;
+        z-index: 0;
+        color: white;
+        font-size: 1.5rem;
+        pointer-events: none;
+        user-select: none;
+        animation-name: fall;
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
       }
     </style>
   <script type="importmap">

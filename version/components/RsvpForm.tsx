@@ -12,6 +12,7 @@ const RsvpForm: React.FC<RsvpFormProps> = ({ onSubmit, findResponse }) => {
   const [preferredDate, setPreferredDate] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const DATES = ['28 Nov', '5 Dez'];
 
   useEffect(() => {
@@ -19,9 +20,13 @@ const RsvpForm: React.FC<RsvpFormProps> = ({ onSubmit, findResponse }) => {
     if (existingResponse) {
       setAttending(existingResponse.attending);
       setPreferredDate(existingResponse.preferred_date || null);
-    } else if (name) { // Only reset if name is being typed
-      setAttending(null);
-      setPreferredDate(null);
+      setIsEditing(true);
+    } else {
+      setIsEditing(false);
+      if (name) { // Only reset if name is being typed for a new user
+        setAttending(null);
+        setPreferredDate(null);
+      }
     }
   }, [name, findResponse]);
 
@@ -73,6 +78,11 @@ const RsvpForm: React.FC<RsvpFormProps> = ({ onSubmit, findResponse }) => {
             className="w-full bg-[#374151] border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-200"
             disabled={isSubmitting}
           />
+          {isEditing && (
+            <p className="text-sm text-gray-400 mt-2 px-1">
+              Olá! Sinta-se à vontade para atualizar a sua resposta.
+            </p>
+          )}
         </div>
 
         <div className="mb-6">
@@ -99,7 +109,7 @@ const RsvpForm: React.FC<RsvpFormProps> = ({ onSubmit, findResponse }) => {
               disabled={isSubmitting}
               className={`py-3 px-4 rounded-lg font-semibold transition duration-200 ${
                 attending === false
-                  ? 'bg-gray-600 text-white ring-2 ring-gray-400'
+                  ? 'bg-red-600 text-white ring-2 ring-red-400'
                   : 'bg-[#374151] text-gray-300 hover:bg-gray-600'
               } disabled:opacity-50`}
             >
@@ -139,7 +149,9 @@ const RsvpForm: React.FC<RsvpFormProps> = ({ onSubmit, findResponse }) => {
             disabled={isSubmitting}
             className="w-full bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-3 px-4 rounded-lg transition duration-200 transform hover:scale-105 disabled:bg-yellow-800 disabled:cursor-not-allowed disabled:scale-100"
           >
-            {isSubmitting ? 'A Enviar...' : 'Enviar Resposta'}
+            {isSubmitting 
+              ? (isEditing ? 'A Atualizar...' : 'A Enviar...') 
+              : (isEditing ? 'Atualizar Resposta' : 'Enviar Resposta')}
           </button>
         </div>
       </form>
