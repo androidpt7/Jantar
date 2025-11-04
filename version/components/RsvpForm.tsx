@@ -50,9 +50,7 @@ const RsvpForm: React.FC<RsvpFormProps> = ({ onSubmit, findResponse }) => {
     
     try {
       await onSubmit(name, attending, preferredDate);
-      setName('');
-      setAttending(null);
-      setPreferredDate(null);
+      // No need to clear form here, as the parent component will hide it
     } catch (err) {
       // The parent component now displays a global error message.
       console.error("Submission failed:", err);
@@ -62,7 +60,7 @@ const RsvpForm: React.FC<RsvpFormProps> = ({ onSubmit, findResponse }) => {
   };
 
   return (
-    <div className="bg-[#1f2937] p-6 rounded-2xl shadow-lg border border-gray-700 h-full flex flex-col">
+    <>
       <h2 className="text-2xl font-bold text-green-400 mb-6">Confirme sua Presença</h2>
       <form onSubmit={handleSubmit} className="flex flex-col flex-grow">
         <div className="mb-6">
@@ -155,7 +153,7 @@ const RsvpForm: React.FC<RsvpFormProps> = ({ onSubmit, findResponse }) => {
           </button>
         </div>
       </form>
-    </div>
+    </>
   );
 };
 

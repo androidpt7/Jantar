@@ -25,24 +25,31 @@ const ResponseList: React.FC<ResponseListProps> = ({ responses, loading }) => {
     }
     
     return (
-      <div className="flex-grow overflow-y-auto pr-2 -mr-2 space-y-3" style={{maxHeight: '200px'}}>
+      <div className="flex-grow overflow-y-auto pr-2 -mr-2 space-y-3" style={{maxHeight: '280px'}}>
         {responses.map((response) => (
-          <div key={response.id || response.name} className="bg-[#2a3a4b] p-3 rounded-lg flex items-center justify-between shadow-md">
+          <div 
+            key={response.id || response.name} 
+            className={`p-4 rounded-xl flex items-center justify-between shadow-lg ${
+              response.attending ? 'bg-[#103c2b]' : 'bg-[#442426]'
+            }`}
+          >
             {response.attending ? (
               <>
                 <div>
-                  <p className="font-semibold text-white">{response.name}</p>
-                  <p className="text-sm text-gray-400">Votou em: {response.preferred_date?.replace('Nov', 'de Novembro').replace('Dez', 'de Dezembro')}</p>
+                  <p className="text-lg font-bold text-white">{response.name}</p>
+                  <p className="text-sm text-gray-300">
+                    Votou em: <strong>{response.preferred_date?.replace('Nov', 'de Novembro').replace('Dez', 'de Dezembro')}</strong>
+                  </p>
                 </div>
-                <span className="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">
+                <span className="bg-green-500 text-white text-xs font-bold px-3 py-1.5 rounded-full whitespace-nowrap">
                   CONFIRMADO
                 </span>
               </>
             ) : (
               <>
-                <p className="font-semibold text-white">{response.name}</p>
-                <span className="text-red-400 font-semibold text-sm">
-                  Não vai
+                <p className="text-lg font-bold text-white">{response.name}</p>
+                <span className="bg-red-500 text-white text-xs font-bold px-4 py-1.5 rounded-full whitespace-nowrap">
+                  NÃO VAI
                 </span>
               </>
             )}

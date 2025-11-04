@@ -3,6 +3,7 @@ import { RsvpResponse } from './types';
 import RsvpForm from './components/RsvpForm';
 import ResponseList from './components/ResponseList';
 import ActionPanel from './components/ActionPanel';
+import ConfirmationModal from './components/ConfirmationModal';
 import { supabase } from './supabaseClient';
 
 const Snowflakes: React.FC = () => {
@@ -24,6 +25,7 @@ const App: React.FC = () => {
   const [responses, setResponses] = useState<RsvpResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   const fetchResponses = useCallback(async () => {
     setLoading(true);
@@ -57,12 +59,17 @@ const App: React.FC = () => {
     } else {
       setError(null); // Clear previous errors on success
       await fetchResponses(); // Refresh list after successful submission
+      setShowConfirmation(true); // Show confirmation modal
     }
   }, [fetchResponses]);
 
   const findResponseByName = useCallback((name: string): RsvpResponse | undefined => {
     return responses.find(res => res.name.toLowerCase() === name.toLowerCase());
   }, [responses]);
+
+  const handleCloseConfirmation = () => {
+    setShowConfirmation(false);
+  };
 
   const confirmedResponses = responses.filter(res => res.attending);
 
@@ -82,7 +89,14 @@ const App: React.FC = () => {
         </header>
 
         <main className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-8">
-          <RsvpForm onSubmit={handleRsvpSubmit} findResponse={findResponseByName} />
+          <div className="bg-[#1f2937] p-6 rounded-2xl shadow-lg border border-gray-700 h-full flex flex-col">
+            {showConfirmation ? (
+              <ConfirmationModal onClose={handleCloseConfirmation} />
+            ) : (
+              <RsvpForm onSubmit={handleRsvpSubmit} findResponse={findResponseByName} />
+            )}
+          </div>
+
           <div className="flex flex-col gap-8">
             {error && <p className="text-red-400 text-center bg-[#1f2937] p-3 rounded-lg">{error}</p>}
             <ResponseList responses={responses} loading={loading} />
