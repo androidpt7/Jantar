@@ -1,11 +1,13 @@
 import React from 'react';
 import MenuIcon from './icons/MenuIcon';
+import LocationIcon from './icons/LocationIcon';
 
 const RestaurantPanel: React.FC = () => {
   // No futuro, estes valores podem vir de props ou de um estado
   const restaurantName = "A ser anunciado";
   const restaurantDescription = "Estamos a finalizar os detalhes do local perfeito para a nossa celebração. Fique atento!";
   const menuLink = "#"; // Link provisório
+  const addressLink = "#"; // Link provisório para a morada
 
   return (
     <div className="bg-[#1f2937] p-6 rounded-2xl shadow-lg border border-gray-700">
@@ -16,19 +18,28 @@ const RestaurantPanel: React.FC = () => {
           {restaurantDescription}
         </p>
       </div>
-      <div className="flex">
+      <div className="flex gap-4">
         <a
           href={menuLink}
           target="_blank"
           rel="noopener noreferrer"
-          // O botão está desativado porque o local ainda não foi decidido.
-          // No futuro, a classe de opacidade e o cursor podem ser removidos quando o link estiver disponível.
           className="flex-1 flex items-center justify-center gap-2 bg-yellow-500 text-gray-900 font-semibold py-3 px-4 rounded-lg transition duration-200 opacity-50 cursor-not-allowed"
           aria-disabled="true"
-          onClick={(e) => e.preventDefault()} // Impede a navegação
+          onClick={(e) => e.preventDefault()}
         >
           <MenuIcon />
           Ver Menu
+        </a>
+        <a
+          href={addressLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-1 flex items-center justify-center gap-2 bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 opacity-50 cursor-not-allowed"
+          aria-disabled="true"
+          onClick={(e) => e.preventDefault()}
+        >
+          <LocationIcon />
+          Ver Morada
         </a>
       </div>
     </div>

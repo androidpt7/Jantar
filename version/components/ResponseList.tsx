@@ -78,7 +78,7 @@ const ResponseList: React.FC<ResponseListProps> = ({ responses, loading }) => {
   return (
     <div className="bg-[#1f2937] p-6 rounded-2xl shadow-lg border border-gray-700 flex-grow flex flex-col">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold text-green-400">Lista de Respostas</h2>
+        <h2 className="text-2xl font-bold text-green-400">Respostas</h2>
         <button 
           onClick={() => setIsSearchVisible(!isSearchVisible)}
           className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
