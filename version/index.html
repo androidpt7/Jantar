@@ -38,34 +38,59 @@
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Adicionar import map para Gemini API e Supabase -->
+    <script type="importmap">
+    {
+      "imports": {
+        "@google/genai": "https://esm.run/@google/generative-ai",
+        "@supabase/supabase-js": "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
+      }
+    }
+    </script>
 <link rel="stylesheet" href="/index.css">
 </head>
 <body>
     <div id="root"></div>
 
-    <script type="text/babel">
-      // Todos os seus ficheiros .tsx e .ts foram combinados aqui.
-      
-      // --- De components/icons/ShareIcon.tsx ---
+    <script type="text/babel" data-type="module">
+      // --- IMPORTAÇÕES ---
+      import { GoogleGenerativeAI } from "@google/genai";
+      import { createClient } from "@supabase/supabase-js";
+
+      // --- INICIALIZAÇÃO DOS CLIENTES ---
+      let ai;
+      let supabase;
+      let configError = null;
+
+      try {
+        // A API Key é obtida a partir das variáveis de ambiente do projeto.
+        if (!process.env.API_KEY) {
+            throw new Error("A API Key do Gemini não foi encontrada. Por favor, configure a variável de ambiente API_KEY.");
+        }
+        ai = new GoogleGenerativeAI({apiKey: process.env.API_KEY});
+        
+        // As credenciais do Supabase são obtidas a partir das variáveis de ambiente.
+        if (!process.env.SUPABASE_URL || !process.env.SUPABASE_KEY) {
+            throw new Error("As credenciais do Supabase não foram encontradas. Por favor, configure as variáveis de ambiente SUPABASE_URL e SUPABASE_KEY.");
+        }
+        supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+
+      } catch (error) {
+        console.error("Erro na inicialização:", error.message);
+        configError = error.message;
+      }
+
+
+      // --- COMPONENTES DA APLICAÇÃO ---
+
       const ShareIcon = () => (
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          width="20" 
-          height="20" 
-          viewBox="0 0 24 24" 
-          fill="none" 
-          stroke="currentColor" 
-          strokeWidth="2" 
-          strokeLinecap="round" 
-          strokeLinejoin="round"
-        >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
           <polyline points="16 6 12 2 8 6"></polyline>
           <line x1="12" y1="2" x2="12" y2="15"></line>
         </svg>
       );
 
-      // --- De components/icons/DownloadIcon.tsx ---
       const DownloadIcon = () => (
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -74,7 +99,6 @@
         </svg>
       );
 
-      // --- De components/icons/SnowflakeIcon.tsx ---
       const SnowflakeIcon = () => {
           const style = {
               left: `${Math.random() * 100}%`,
@@ -83,62 +107,16 @@
               opacity: Math.random() * 0.5 + 0.3,
               transform: `scale(${Math.random() * 0.8 + 0.2})`,
           };
-
           return (
               <div className="snowflake" style={style}>
-                  <svg
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                  >
-                      <line x1="12" y1="2" x2="12" y2="22"></line>
-                      <line x1="2" y1="12" x2="22" y2="12"></line>
-                      <line x1="5.64" y1="5.64" x2="18.36" y2="18.36"></line>
-                      <line x1="5.64" y1="18.36" x2="18.36" y2="5.64"></line>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="12" y1="2" x2="12" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="5.64" y1="5.64" x2="18.36" y2="18.36"></line><line x1="5.64" y1="18.36" x2="18.36" y2="5.64"></line><line x1="12" y1="2" x2="14" y2="5"></line><line x1="12" y1="2" x2="10" y2="5"></line><line x1="12" y1="22" x2="14" y2="19"></line><line x1="12" y1="22" x2="10" y2="19"></line><line x1="2" y1="12" x2="5" y2="10"></line><line x1="2" y1="12" x2="5" y2="14"></line><line x1="22" y1="12" x2="19" y2="10"></line><line x1="22" y1="12" x2="19" y2="14"></line>
                   </svg>
               </div>
           );
       };
-      
-      // --- Serviço de API (Simulado) ---
-      // NOTA: Este é um serviço de API simulado. Você precisará criar um backend
-      // (ex: com Netlify Functions) e substituir estas URLs pelas suas.
-      const API_BASE_URL = '/api'; // Exemplo para Netlify Functions
 
-      const apiService = {
-        getSubmissions: async () => {
-          // NOTA: Substitua este fetch pelo URL da sua função de backend que obtém os dados.
-          const response = await fetch(`${API_BASE_URL}/submissions`);
-          if (!response.ok) {
-            throw new Error('Falha ao obter as respostas.');
-          }
-          return response.json();
-        },
-        addOrUpdateSubmission: async (submission) => {
-          // NOTA: Substitua este fetch pelo URL da sua função de backend que adiciona/atualiza os dados.
-          const response = await fetch(`${API_BASE_URL}/submissions`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(submission),
-          });
-          if (!response.ok) {
-            throw new Error('Falha ao enviar a resposta.');
-          }
-          return response.json();
-        },
-      };
-
-
-      // --- De components/Header.tsx ---
-      const Header = () => {
-        return (
+      const Header = () => (
           <header className="text-center w-full max-w-3xl mx-auto">
             <h1 className="font-christmas text-5xl sm:text-6xl md:text-7xl text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]">
               <span className="text-red-500">Jantar</span> de <span className="text-green-400">Natal</span>
@@ -147,17 +125,15 @@
               Vamos organizar nossa celebração! Por favor, preencha o formulário abaixo.
             </p>
           </header>
-        );
-      };
+      );
 
-      // --- De components/ChristmasForm.tsx ---
       const ChristmasForm = ({ onSubmit, submissions }) => {
         const [name, setName] = React.useState('');
         const [isAttending, setIsAttending] = React.useState(null);
         const [selectedDate, setSelectedDate] = React.useState(null);
         const [error, setError] = React.useState('');
-        const [isSubmitting, setIsSubmitting] = React.useState(false);
         const [isEditing, setIsEditing] = React.useState(false);
+        const [isSubmitting, setIsSubmitting] = React.useState(false);
 
         React.useEffect(() => {
             const trimmedName = name.trim().toLowerCase();
@@ -173,7 +149,7 @@
               setSelectedDate(existingSubmission.selectedDate);
               setIsEditing(true);
             } else {
-              if(isEditing) { 
+              if(isEditing) {
                 setIsAttending(null);
                 setSelectedDate(null);
               }
@@ -193,20 +169,13 @@
           }
           setError('');
           setIsSubmitting(true);
-          
           const submissionData = {
             name: name.trim(),
             isAttending,
             selectedDate: isAttending ? selectedDate : null,
           };
-
-          try {
-            await onSubmit(submissionData);
-          } catch (apiError) {
-             setError(apiError.message || 'Ocorreu um erro. Tente novamente.');
-          } finally {
-             setIsSubmitting(false);
-          }
+          await onSubmit(submissionData);
+          setIsSubmitting(false);
         };
 
         return (
@@ -221,21 +190,22 @@
                 onChange={(e) => setName(e.target.value)}
                 className="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
                 placeholder="Digite seu nome para responder ou alterar"
+                disabled={isSubmitting}
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-300">Você vai participar?</label>
               <div className="mt-2 flex items-center space-x-4">
-                <button type="button" onClick={() => setIsAttending(true)} className={`px-6 py-2 rounded-lg font-semibold transition-all ${isAttending === true ? 'bg-green-500 text-white ring-2 ring-white' : 'bg-gray-600 hover:bg-gray-500'}`}>Sim</button>
-                <button type="button" onClick={() => setIsAttending(false)} className={`px-6 py-2 rounded-lg font-semibold transition-all ${isAttending === false ? 'bg-red-500 text-white ring-2 ring-white' : 'bg-gray-600 hover:bg-gray-500'}`}>Não</button>
+                <button type="button" disabled={isSubmitting} onClick={() => setIsAttending(true)} className={`px-6 py-2 rounded-lg font-semibold transition-all ${isAttending === true ? 'bg-green-500 text-white ring-2 ring-white' : 'bg-gray-600 hover:bg-gray-500'}`}>Sim</button>
+                <button type="button" disabled={isSubmitting} onClick={() => setIsAttending(false)} className={`px-6 py-2 rounded-lg font-semibold transition-all ${isAttending === false ? 'bg-red-500 text-white ring-2 ring-white' : 'bg-gray-600 hover:bg-gray-500'}`}>Não</button>
               </div>
             </div>
             {isAttending && (
                 <div>
                     <label className="block text-sm font-medium text-gray-300">Qual data prefere?</label>
                     <div className="mt-2 flex items-center space-x-4">
-                        <button type="button" onClick={() => setSelectedDate('28 de Novembro')} className={`px-6 py-2 rounded-lg font-semibold transition-all ${selectedDate === '28 de Novembro' ? 'bg-yellow-500 text-gray-900 ring-2 ring-white' : 'bg-gray-600 hover:bg-gray-500'}`}>28 Nov</button>
-                        <button type="button" onClick={() => setSelectedDate('5 de Dezembro')} className={`px-6 py-2 rounded-lg font-semibold transition-all ${selectedDate === '5 de Dezembro' ? 'bg-yellow-500 text-gray-900 ring-2 ring-white' : 'bg-gray-600 hover:bg-gray-500'}`}>5 Dez</button>
+                        <button type="button" disabled={isSubmitting} onClick={() => setSelectedDate('28 de Novembro')} className={`px-6 py-2 rounded-lg font-semibold transition-all ${selectedDate === '28 de Novembro' ? 'bg-yellow-500 text-gray-900 ring-2 ring-white' : 'bg-gray-600 hover:bg-gray-500'}`}>28 Nov</button>
+                        <button type="button" disabled={isSubmitting} onClick={() => setSelectedDate('5 de Dezembro')} className={`px-6 py-2 rounded-lg font-semibold transition-all ${selectedDate === '5 de Dezembro' ? 'bg-yellow-500 text-gray-900 ring-2 ring-white' : 'bg-gray-600 hover:bg-gray-500'}`}>5 Dez</button>
                     </div>
                 </div>
             )}
@@ -245,61 +215,153 @@
               disabled={isSubmitting}
               className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:bg-yellow-800 disabled:cursor-wait text-gray-900 font-bold py-3 px-4 rounded-lg transition-colors duration-300 text-lg"
             >
-              {isSubmitting ? 'Enviando...' : (isEditing ? 'Atualizar Resposta' : 'Enviar Resposta')}
+              {isSubmitting ? 'A Enviar...' : (isEditing ? 'Atualizar Resposta' : 'Enviar Resposta')}
             </button>
           </form>
         );
       };
       
-      // --- De components/SubmissionsList.tsx ---
-      const SubmissionsList = ({ submissions, loading, error }) => {
-        const renderContent = () => {
-          if (loading) {
-            return <p className="text-gray-400 text-center">A carregar respostas...</p>;
-          }
-          if (error) {
-             return <p className="text-red-400 text-center">Erro ao carregar: {error}</p>;
-          }
-          if (submissions.length === 0) {
-            return <p className="text-gray-400 text-center">Ainda ninguém respondeu. Seja o primeiro!</p>;
-          }
-          return (
-            <ul className="space-y-3">
-              {submissions.map((sub) => (
-                <li key={sub.id || sub.name} className={`p-3 rounded-lg flex items-center ${sub.isAttending ? 'bg-green-900/50' : 'bg-red-900/50'}`}>
-                  <div className="flex-grow">
-                    <p className="font-semibold text-white">{sub.name}</p>
-                    {sub.isAttending && sub.selectedDate && (
-                       <p className="text-xs text-gray-300 mt-1">Votou em: <strong>{sub.selectedDate}</strong></p>
-                    )}
-                  </div>
-                  {sub.isAttending ? (
-                    <span className="text-xs font-bold bg-green-500 text-white py-1 px-2 rounded-full flex-shrink-0">CONFIRMADO</span>
-                  ) : (
-                    <span className="text-xs font-bold bg-red-500 text-white py-1 px-2 rounded-full flex-shrink-0">NÃO VAI</span>
-                  )}
-                </li>
-              ))}
-            </ul>
-          );
-        };
+      const SubmissionsList = ({ submissions, isLoading, error }) => {
+        const sortedSubmissions = React.useMemo(() => {
+          if (!submissions) return [];
+          return [...submissions].sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        }, [submissions]);
 
         return (
           <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-lg border border-white/20">
             <h2 className="text-2xl font-bold text-center text-green-300 mb-4">Lista de Respostas</h2>
             <div className="max-h-96 overflow-y-auto pr-2">
-              {renderContent()}
+              {isLoading ? (
+                 <p className="text-gray-400 text-center">A carregar respostas...</p>
+              ) : error ? (
+                 <p className="text-red-400 text-center">{error}</p>
+              ) : sortedSubmissions.length === 0 ? (
+                <p className="text-gray-400 text-center">Ainda ninguém respondeu. Seja o primeiro!</p>
+              ) : (
+                <ul className="space-y-3">
+                  {sortedSubmissions.map((sub) => (
+                    <li key={sub.id} className={`p-3 rounded-lg flex items-center ${sub.isAttending ? 'bg-green-900/50' : 'bg-red-900/50'}`}>
+                      <div className="flex-grow">
+                        <p className="font-semibold text-white">{sub.name}</p>
+                        {sub.isAttending && sub.selectedDate && (
+                           <p className="text-xs text-gray-300 mt-1">Votou em: <strong>{sub.selectedDate}</strong></p>
+                        )}
+                      </div>
+                      {sub.isAttending ? (
+                        <span className="text-xs font-bold bg-green-500 text-white py-1 px-2 rounded-full flex-shrink-0">CONFIRMADO</span>
+                      ) : (
+                        <span className="text-xs font-bold bg-red-500 text-white py-1 px-2 rounded-full flex-shrink-0">NÃO VAI</span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </div>
         );
       };
+
+      const SummaryDisplay = ({ submissions }) => {
+        const [summary, setSummary] = React.useState('');
+        const [isGenerating, setIsGenerating] = React.useState(false);
+        const [error, setError] = React.useState('');
+        
+        const generateSummary = async () => {
+          if (!ai) {
+              setError("O cliente Gemini AI não está inicializado.");
+              return;
+          }
+          if (submissions.length === 0) {
+              setError("Não há respostas para resumir.");
+              setTimeout(() => setError(''), 3000);
+              return;
+          }
+
+          setIsGenerating(true);
+          setError('');
+          setSummary('');
+
+          try {
+            const attendees = submissions.filter(s => s.isAttending);
+            const nonAttendees = submissions.filter(s => !s.isAttending);
+            const dateVotes = attendees.reduce((acc, curr) => {
+                if (curr.selectedDate) {
+                    acc[curr.selectedDate] = (acc[curr.selectedDate] || 0) + 1;
+                }
+                return acc;
+            }, {});
+
+            const prompt = `
+              Você é um assistente de planeamento de festas de Natal, amigável e festivo.
+              Analise a seguinte lista de convidados para um jantar de Natal e crie um resumo.
+              
+              Dados dos Convidados:
+              - Total de convidados que responderam: ${submissions.length}
+              - Confirmados (${attendees.length}): ${attendees.map(p => p.name).join(', ') || 'Nenhum'}
+              - Não vão (${nonAttendees.length}): ${nonAttendees.map(p => p.name).join(', ') || 'Nenhum'}
+              - Votos por data: ${JSON.stringify(dateVotes)}
+
+              O seu resumo deve:
+              1. Começar com uma saudação natalícia.
+              2. Indicar o número total de pessoas que confirmaram presença e as que não vão.
+              3. Anunciar a data mais votada para o jantar. Se houver um empate ou nenhuma votação, mencione isso.
+              4. Terminar com uma nota alegre.
+              
+              Seja conciso e use emojis de Natal.
+            `;
+            
+            const response = await ai.models.generateContent({
+                model: "gemini-2.5-flash",
+                contents: prompt,
+            });
+
+            setSummary(response.text);
+
+          } catch (err) {
+            console.error("Erro ao gerar resumo com Gemini:", err);
+            setError("Houve um problema ao contactar a IA. Tente novamente.");
+          } finally {
+            setIsGenerating(false);
+          }
+        };
+
+        const renderSummary = (text) => {
+            return text.split('\n').map((line, index) => {
+                if (line.trim() === '') return null;
+                if (line.trim().startsWith('* ') || line.trim().startsWith('- ')) {
+                    return <p key={index} className="ml-4">{line}</p>;
+                }
+                return <p key={index} className="mb-2">{line}</p>;
+            }).filter(Boolean);
+        };
+
+        return (
+          <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-lg border border-white/20">
+            <h2 className="text-2xl font-bold text-center text-green-300 mb-4">Resumo da IA 🎄</h2>
+            <div className="text-gray-300 text-center space-y-2 mb-6">
+                <p>Peça à nossa IA para analisar as respostas e criar um resumo rápido do plano!</p>
+            </div>
+            <button
+              onClick={generateSummary}
+              disabled={isGenerating || submissions.length === 0}
+              className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-purple-800 disabled:cursor-wait text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300 flex items-center justify-center"
+            >
+              {isGenerating ? 'A IA está a pensar...' : 'Gerar Resumo com IA'}
+            </button>
+            {error && <p className="text-red-400 text-sm text-center mt-4">{error}</p>}
+            {summary && (
+                <div className="mt-6 p-4 bg-gray-900/50 rounded-lg border border-gray-600">
+                    <div className="text-gray-200">{renderSummary(summary)}</div>
+                </div>
+            )}
+          </div>
+        );
+      };
       
-      // --- De components/ShareButton.tsx ---
       const ShareButton = () => {
         const [buttonText, setButtonText] = React.useState('Partilhar Link');
 
         const handleShare = () => {
-          // Agora apenas copia o link principal, pois os dados são centralizados
           navigator.clipboard.writeText(window.location.href).then(() => {
             setButtonText('Link Copiado!');
             setTimeout(() => setButtonText('Partilhar Link'), 2000);
@@ -321,7 +383,6 @@
         );
       };
 
-      // --- De components/ExportButton.tsx ---
       const ExportButton = ({ submissions }) => {
           const attendees = submissions.filter(s => s.isAttending);
 
@@ -358,55 +419,60 @@
           );
       };
       
-      // --- De App.tsx ---
       const App = () => {
-        const { useState, useEffect, useCallback } = React;
+        const { useState, useEffect } = React;
 
         const [submissions, setSubmissions] = useState([]);
-        const [loading, setLoading] = useState(true);
-        const [error, setError] = useState(null);
         const [showForm, setShowForm] = useState(true);
+        const [isLoading, setIsLoading] = useState(true);
+        const [error, setError] = useState(null);
 
-        const fetchSubmissions = useCallback(async () => {
-          try {
-            // NOTA: Para testar sem um backend, pode comentar as linhas da API
-            // e descomentar a linha de dados de exemplo abaixo.
-            // const data = await apiService.getSubmissions();
-            // setSubmissions(data);
+        const fetchSubmissions = async () => {
+          setIsLoading(true);
+          setError(null);
+          const { data, error } = await supabase
+            .from('rsvps')
+            .select('*');
 
-            // Dados de exemplo para desenvolvimento:
-            // setSubmissions([
-            //   { id: 1, name: 'Ana', isAttending: true, selectedDate: '28 de Novembro' },
-            //   { id: 2, name: 'Bruno', isAttending: false, selectedDate: null }
-            // ]);
-             console.warn("API de desenvolvimento está desativada. Usando uma lista vazia.");
-             setSubmissions([]);
-
-
-          } catch (e) {
-            setError(e.message);
-          } finally {
-            setLoading(false);
+          if (error) {
+            console.error("Erro ao buscar respostas:", error);
+            setError("Não foi possível carregar as respostas. Tente recarregar a página.");
+          } else {
+            setSubmissions(data);
           }
-        }, []);
+          setIsLoading(false);
+        };
 
         useEffect(() => {
           fetchSubmissions();
-        }, [fetchSubmissions]);
+        }, []);
 
-        const handleNewSubmission = async (submission) => {
-          // NOTA: Para testar sem um backend, pode comentar a linha da API
-          // e simular a adição localmente.
-          // await apiService.addOrUpdateSubmission(submission);
-          // fetchSubmissions(); // Re-sincroniza com a base de dados
+        const handleSubmission = async (submission) => {
+          const trimmedName = submission.name.trim();
+          const existingSubmission = submissions.find(s => s.name.toLowerCase() === trimmedName.toLowerCase());
           
-          // Simulação para desenvolvimento:
-          const otherSubmissions = submissions.filter(s => s.name.toLowerCase() !== submission.name.toLowerCase());
-          const newSubmissions = [...otherSubmissions, { ...submission, id: crypto.randomUUID() }];
-          setSubmissions(newSubmissions);
+          let dbError;
 
+          if (existingSubmission) {
+            const { error } = await supabase
+              .from('rsvps')
+              .update({ isAttending: submission.isAttending, selectedDate: submission.selectedDate })
+              .eq('id', existingSubmission.id);
+            dbError = error;
+          } else {
+            const { error } = await supabase
+              .from('rsvps')
+              .insert([{ name: trimmedName, isAttending: submission.isAttending, selectedDate: submission.selectedDate }]);
+            dbError = error;
+          }
 
-          setShowForm(false);
+          if (dbError) {
+            console.error("Erro na base de dados:", dbError);
+            // Poderíamos mostrar um erro no formulário aqui.
+          } else {
+            await fetchSubmissions();
+            setShowForm(false);
+          }
         };
 
         return (
@@ -419,7 +485,7 @@
               <div className="w-full max-w-4xl mx-auto mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-lg border border-white/20">
                   {showForm ? (
-                     <ChristmasForm onSubmit={handleNewSubmission} submissions={submissions} />
+                     <ChristmasForm onSubmit={handleSubmission} submissions={submissions} />
                   ) : (
                     <div className="text-center flex flex-col items-center justify-center h-full">
                       <h2 className="text-2xl font-bold text-green-300">Obrigado por responder!</h2>
@@ -434,11 +500,12 @@
                   )}
                 </div>
                 <div className="space-y-8">
-                  <SubmissionsList submissions={submissions} loading={loading} error={error} />
+                  <SubmissionsList submissions={submissions} isLoading={isLoading} error={error}/>
+                  <SummaryDisplay submissions={submissions} />
                    <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-lg border border-white/20">
                     <h2 className="text-2xl font-bold text-center text-green-300 mb-4">Ações do Painel</h2>
                     <div className="text-gray-300 text-center space-y-2">
-                        <p>Partilhe o link para que outros respondam ou exporte a lista de confirmados.</p>
+                        <p>Partilhe o link da página ou exporte a lista de confirmados.</p>
                     </div>
                     <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <ShareButton />
@@ -452,17 +519,26 @@
         );
       }
       
-      // --- De index.tsx ---
       const rootElement = document.getElementById('root');
-      if (!rootElement) {
-        throw new Error("Could not find root element to mount to");
+      if (configError) {
+          const errorMessage = `
+              <div class="bg-red-900 text-white p-8 min-h-screen flex items-center justify-center">
+                  <div class="text-center max-w-2xl">
+                      <h1 class="text-3xl font-bold">Erro de Configuração</h1>
+                      <p class="mt-4">${configError}</p>
+                      <p class="mt-6 text-sm text-gray-300">Por favor, verifique as variáveis de ambiente do seu projeto.</p>
+                  </div>
+              </div>
+          `;
+          rootElement.innerHTML = errorMessage;
+      } else {
+        const root = ReactDOM.createRoot(rootElement);
+        root.render(
+          <React.StrictMode>
+            <App />
+          </React.StrictMode>
+        );
       }
-      const root = ReactDOM.createRoot(rootElement);
-      root.render(
-        <React.StrictMode>
-          <App />
-        </React.StrictMode>
-      );
     </script>
 <script type="module" src="/index.tsx"></script>
 </body>
