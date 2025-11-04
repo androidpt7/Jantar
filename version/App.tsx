@@ -5,6 +5,7 @@ import ResponseList from './components/ResponseList';
 import ActionPanel from './components/ActionPanel';
 import ConfirmationModal from './components/ConfirmationModal';
 import RestaurantPanel from './components/RestaurantPanel';
+import AudioPlayer from './components/AudioPlayer';
 import { supabase } from './supabaseClient';
 
 const Snowflakes: React.FC = () => {
@@ -90,7 +91,7 @@ const App: React.FC = () => {
         </header>
 
         <main className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="bg-[#1f2937] p-6 rounded-2xl shadow-lg border border-gray-700 flex flex-col">
+          <div className="bg-[#1f2937] p-6 rounded-2xl shadow-lg border border-gray-700 flex flex-col md:self-start">
             {showConfirmation ? (
               <ConfirmationModal onClose={handleCloseConfirmation} />
             ) : (
@@ -101,10 +102,13 @@ const App: React.FC = () => {
           <div className="flex flex-col gap-8">
             {error && <p className="text-red-400 text-center bg-[#1f2937] p-3 rounded-lg">{error}</p>}
             <ResponseList responses={responses} loading={loading} />
-            <ActionPanel confirmedResponses={confirmedResponses} />
-            <RestaurantPanel />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+              <RestaurantPanel />
+              <ActionPanel confirmedResponses={confirmedResponses} />
+            </div>
           </div>
         </main>
+        <AudioPlayer />
       </div>
     </>
   );
