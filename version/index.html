@@ -1,0 +1,469 @@
+
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Planejador de Jantar de Natal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Mountains+of+Christmas:wght@700&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Montserrat', sans-serif;
+      }
+      .font-christmas {
+        font-family: 'Mountains of Christmas', cursive;
+      }
+      /* Estilos para a animação do floco de neve */
+      @keyframes fall {
+          0% {
+              transform: translateY(-10vh) rotate(0deg);
+          }
+          100% {
+              transform: translateY(110vh) rotate(360deg);
+          }
+      }
+      .snowflake {
+          position: absolute;
+          top: -10vh;
+          color: white;
+          animation-name: fall;
+          animation-timing-function: linear;
+          animation-iteration-count: infinite;
+      }
+    </style>
+    <!-- Carregar bibliotecas necessárias -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+      // Todos os seus ficheiros .tsx e .ts foram combinados aqui.
+      
+      // --- De components/icons/ShareIcon.tsx ---
+      const ShareIcon = () => (
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          width="20" 
+          height="20" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          strokeWidth="2" 
+          strokeLinecap="round" 
+          strokeLinejoin="round"
+        >
+          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+          <polyline points="16 6 12 2 8 6"></polyline>
+          <line x1="12" y1="2" x2="12" y2="15"></line>
+        </svg>
+      );
+
+      // --- De components/icons/DownloadIcon.tsx ---
+      const DownloadIcon = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+      );
+
+      // --- De components/icons/SnowflakeIcon.tsx ---
+      const SnowflakeIcon = () => {
+          const style = {
+              left: `${Math.random() * 100}%`,
+              animationDuration: `${Math.random() * 10 + 5}s`,
+              animationDelay: `${Math.random() * 5}s`,
+              opacity: Math.random() * 0.5 + 0.3,
+              transform: `scale(${Math.random() * 0.8 + 0.2})`,
+          };
+
+          return (
+              <div className="snowflake" style={style}>
+                  <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                  >
+                      <line x1="12" y1="2" x2="12" y2="22"></line>
+                      <line x1="2" y1="12" x2="22" y2="12"></line>
+                      <line x1="5.64" y1="5.64" x2="18.36" y2="18.36"></line>
+                      <line x1="5.64" y1="18.36" x2="18.36" y2="5.64"></line>
+                  </svg>
+              </div>
+          );
+      };
+      
+      // --- Serviço de API (Simulado) ---
+      // NOTA: Este é um serviço de API simulado. Você precisará criar um backend
+      // (ex: com Netlify Functions) e substituir estas URLs pelas suas.
+      const API_BASE_URL = '/api'; // Exemplo para Netlify Functions
+
+      const apiService = {
+        getSubmissions: async () => {
+          // NOTA: Substitua este fetch pelo URL da sua função de backend que obtém os dados.
+          const response = await fetch(`${API_BASE_URL}/submissions`);
+          if (!response.ok) {
+            throw new Error('Falha ao obter as respostas.');
+          }
+          return response.json();
+        },
+        addOrUpdateSubmission: async (submission) => {
+          // NOTA: Substitua este fetch pelo URL da sua função de backend que adiciona/atualiza os dados.
+          const response = await fetch(`${API_BASE_URL}/submissions`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(submission),
+          });
+          if (!response.ok) {
+            throw new Error('Falha ao enviar a resposta.');
+          }
+          return response.json();
+        },
+      };
+
+
+      // --- De components/Header.tsx ---
+      const Header = () => {
+        return (
+          <header className="text-center w-full max-w-3xl mx-auto">
+            <h1 className="font-christmas text-5xl sm:text-6xl md:text-7xl text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]">
+              <span className="text-red-500">Jantar</span> de <span className="text-green-400">Natal</span>
+            </h1>
+            <p className="mt-2 text-lg text-gray-300">
+              Vamos organizar nossa celebração! Por favor, preencha o formulário abaixo.
+            </p>
+          </header>
+        );
+      };
+
+      // --- De components/ChristmasForm.tsx ---
+      const ChristmasForm = ({ onSubmit, submissions }) => {
+        const [name, setName] = React.useState('');
+        const [isAttending, setIsAttending] = React.useState(null);
+        const [selectedDate, setSelectedDate] = React.useState(null);
+        const [error, setError] = React.useState('');
+        const [isSubmitting, setIsSubmitting] = React.useState(false);
+        const [isEditing, setIsEditing] = React.useState(false);
+
+        React.useEffect(() => {
+            const trimmedName = name.trim().toLowerCase();
+            if (trimmedName === '') {
+              setIsAttending(null);
+              setSelectedDate(null);
+              setIsEditing(false);
+              return;
+            }
+            const existingSubmission = submissions.find(s => s.name.toLowerCase() === trimmedName);
+            if (existingSubmission) {
+              setIsAttending(existingSubmission.isAttending);
+              setSelectedDate(existingSubmission.selectedDate);
+              setIsEditing(true);
+            } else {
+              if(isEditing) { 
+                setIsAttending(null);
+                setSelectedDate(null);
+              }
+              setIsEditing(false);
+            }
+        }, [name, submissions]);
+
+        const handleSubmit = async (e) => {
+          e.preventDefault();
+          if (!name.trim() || isAttending === null) {
+            setError('Por favor, preencha seu nome e confirme sua presença.');
+            return;
+          }
+          if (isAttending && !selectedDate) {
+            setError('Se você vai, por favor, escolha uma data preferida.');
+            return;
+          }
+          setError('');
+          setIsSubmitting(true);
+          
+          const submissionData = {
+            name: name.trim(),
+            isAttending,
+            selectedDate: isAttending ? selectedDate : null,
+          };
+
+          try {
+            await onSubmit(submissionData);
+          } catch (apiError) {
+             setError(apiError.message || 'Ocorreu um erro. Tente novamente.');
+          } finally {
+             setIsSubmitting(false);
+          }
+        };
+
+        return (
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <h2 className="text-2xl font-bold text-center text-green-300 mb-4">{isEditing ? 'Alterar sua Resposta' : 'Confirme sua Presença'}</h2>
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-300">Seu Nome</label>
+              <input
+                type="text"
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                placeholder="Digite seu nome para responder ou alterar"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-300">Você vai participar?</label>
+              <div className="mt-2 flex items-center space-x-4">
+                <button type="button" onClick={() => setIsAttending(true)} className={`px-6 py-2 rounded-lg font-semibold transition-all ${isAttending === true ? 'bg-green-500 text-white ring-2 ring-white' : 'bg-gray-600 hover:bg-gray-500'}`}>Sim</button>
+                <button type="button" onClick={() => setIsAttending(false)} className={`px-6 py-2 rounded-lg font-semibold transition-all ${isAttending === false ? 'bg-red-500 text-white ring-2 ring-white' : 'bg-gray-600 hover:bg-gray-500'}`}>Não</button>
+              </div>
+            </div>
+            {isAttending && (
+                <div>
+                    <label className="block text-sm font-medium text-gray-300">Qual data prefere?</label>
+                    <div className="mt-2 flex items-center space-x-4">
+                        <button type="button" onClick={() => setSelectedDate('28 de Novembro')} className={`px-6 py-2 rounded-lg font-semibold transition-all ${selectedDate === '28 de Novembro' ? 'bg-yellow-500 text-gray-900 ring-2 ring-white' : 'bg-gray-600 hover:bg-gray-500'}`}>28 Nov</button>
+                        <button type="button" onClick={() => setSelectedDate('5 de Dezembro')} className={`px-6 py-2 rounded-lg font-semibold transition-all ${selectedDate === '5 de Dezembro' ? 'bg-yellow-500 text-gray-900 ring-2 ring-white' : 'bg-gray-600 hover:bg-gray-500'}`}>5 Dez</button>
+                    </div>
+                </div>
+            )}
+            {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:bg-yellow-800 disabled:cursor-wait text-gray-900 font-bold py-3 px-4 rounded-lg transition-colors duration-300 text-lg"
+            >
+              {isSubmitting ? 'Enviando...' : (isEditing ? 'Atualizar Resposta' : 'Enviar Resposta')}
+            </button>
+          </form>
+        );
+      };
+      
+      // --- De components/SubmissionsList.tsx ---
+      const SubmissionsList = ({ submissions, loading, error }) => {
+        const renderContent = () => {
+          if (loading) {
+            return <p className="text-gray-400 text-center">A carregar respostas...</p>;
+          }
+          if (error) {
+             return <p className="text-red-400 text-center">Erro ao carregar: {error}</p>;
+          }
+          if (submissions.length === 0) {
+            return <p className="text-gray-400 text-center">Ainda ninguém respondeu. Seja o primeiro!</p>;
+          }
+          return (
+            <ul className="space-y-3">
+              {submissions.map((sub) => (
+                <li key={sub.id || sub.name} className={`p-3 rounded-lg flex items-center ${sub.isAttending ? 'bg-green-900/50' : 'bg-red-900/50'}`}>
+                  <div className="flex-grow">
+                    <p className="font-semibold text-white">{sub.name}</p>
+                    {sub.isAttending && sub.selectedDate && (
+                       <p className="text-xs text-gray-300 mt-1">Votou em: <strong>{sub.selectedDate}</strong></p>
+                    )}
+                  </div>
+                  {sub.isAttending ? (
+                    <span className="text-xs font-bold bg-green-500 text-white py-1 px-2 rounded-full flex-shrink-0">CONFIRMADO</span>
+                  ) : (
+                    <span className="text-xs font-bold bg-red-500 text-white py-1 px-2 rounded-full flex-shrink-0">NÃO VAI</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          );
+        };
+
+        return (
+          <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-lg border border-white/20">
+            <h2 className="text-2xl font-bold text-center text-green-300 mb-4">Lista de Respostas</h2>
+            <div className="max-h-96 overflow-y-auto pr-2">
+              {renderContent()}
+            </div>
+          </div>
+        );
+      };
+      
+      // --- De components/ShareButton.tsx ---
+      const ShareButton = () => {
+        const [buttonText, setButtonText] = React.useState('Partilhar Link');
+
+        const handleShare = () => {
+          // Agora apenas copia o link principal, pois os dados são centralizados
+          navigator.clipboard.writeText(window.location.href).then(() => {
+            setButtonText('Link Copiado!');
+            setTimeout(() => setButtonText('Partilhar Link'), 2000);
+          }).catch(err => {
+            console.error('Failed to copy link: ', err);
+            setButtonText('Erro ao copiar');
+            setTimeout(() => setButtonText('Partilhar Link'), 2000);
+          });
+        };
+
+        return (
+          <button
+            onClick={handleShare}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300 flex items-center justify-center"
+          >
+            <ShareIcon />
+            <span className="ml-2">{buttonText}</span>
+          </button>
+        );
+      };
+
+      // --- De components/ExportButton.tsx ---
+      const ExportButton = ({ submissions }) => {
+          const attendees = submissions.filter(s => s.isAttending);
+
+          const handleExport = () => {
+              if (attendees.length === 0) return;
+              const csvHeader = "Nome,Presença,Data Votada\n";
+              const csvRows = attendees.map(attendee => {
+                  const name = `"${attendee.name.replace(/"/g, '""')}"`;
+                  const presence = "Confirmado";
+                  const date = attendee.selectedDate || 'N/A';
+                  return `${name},${presence},${date}`;
+              }).join('\n');
+              const csvContent = csvHeader + csvRows;
+              const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+              const url = URL.createObjectURL(blob);
+              const link = document.createElement('a');
+              link.href = url;
+              link.setAttribute('download', 'lista_convidados.csv');
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              URL.revokeObjectURL(url);
+          };
+
+          return (
+              <button
+                  onClick={handleExport}
+                  disabled={attendees.length === 0}
+                  className="w-full bg-green-600 hover:bg-green-700 disabled:bg-green-800 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300 flex items-center justify-center"
+              >
+                  <DownloadIcon />
+                  <span className="ml-2">Exportar Lista</span>
+              </button>
+          );
+      };
+      
+      // --- De App.tsx ---
+      const App = () => {
+        const { useState, useEffect, useCallback } = React;
+
+        const [submissions, setSubmissions] = useState([]);
+        const [loading, setLoading] = useState(true);
+        const [error, setError] = useState(null);
+        const [showForm, setShowForm] = useState(true);
+
+        const fetchSubmissions = useCallback(async () => {
+          try {
+            // NOTA: Para testar sem um backend, pode comentar as linhas da API
+            // e descomentar a linha de dados de exemplo abaixo.
+            // const data = await apiService.getSubmissions();
+            // setSubmissions(data);
+
+            // Dados de exemplo para desenvolvimento:
+            // setSubmissions([
+            //   { id: 1, name: 'Ana', isAttending: true, selectedDate: '28 de Novembro' },
+            //   { id: 2, name: 'Bruno', isAttending: false, selectedDate: null }
+            // ]);
+             console.warn("API de desenvolvimento está desativada. Usando uma lista vazia.");
+             setSubmissions([]);
+
+
+          } catch (e) {
+            setError(e.message);
+          } finally {
+            setLoading(false);
+          }
+        }, []);
+
+        useEffect(() => {
+          fetchSubmissions();
+        }, [fetchSubmissions]);
+
+        const handleNewSubmission = async (submission) => {
+          // NOTA: Para testar sem um backend, pode comentar a linha da API
+          // e simular a adição localmente.
+          // await apiService.addOrUpdateSubmission(submission);
+          // fetchSubmissions(); // Re-sincroniza com a base de dados
+          
+          // Simulação para desenvolvimento:
+          const otherSubmissions = submissions.filter(s => s.name.toLowerCase() !== submission.name.toLowerCase());
+          const newSubmissions = [...otherSubmissions, { ...submission, id: crypto.randomUUID() }];
+          setSubmissions(newSubmissions);
+
+
+          setShowForm(false);
+        };
+
+        return (
+          <div className="min-h-screen bg-gray-900 text-white relative overflow-hidden">
+            <div className="absolute inset-0 z-0">
+              {[...Array(20)].map((_, i) => <SnowflakeIcon key={i} />)}
+            </div>
+            <div className="relative z-10 flex flex-col items-center p-4 sm:p-6 md:p-8">
+              <Header />
+              <div className="w-full max-w-4xl mx-auto mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-lg border border-white/20">
+                  {showForm ? (
+                     <ChristmasForm onSubmit={handleNewSubmission} submissions={submissions} />
+                  ) : (
+                    <div className="text-center flex flex-col items-center justify-center h-full">
+                      <h2 className="text-2xl font-bold text-green-300">Obrigado por responder!</h2>
+                      <p className="mt-2 text-gray-300">Sua resposta foi registrada com sucesso.</p>
+                      <button
+                        onClick={() => setShowForm(true)}
+                        className="mt-6 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-2 px-4 rounded-lg transition-colors duration-300"
+                      >
+                        Adicionar ou Alterar Resposta
+                      </button>
+                    </div>
+                  )}
+                </div>
+                <div className="space-y-8">
+                  <SubmissionsList submissions={submissions} loading={loading} error={error} />
+                   <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-lg border border-white/20">
+                    <h2 className="text-2xl font-bold text-center text-green-300 mb-4">Ações do Painel</h2>
+                    <div className="text-gray-300 text-center space-y-2">
+                        <p>Partilhe o link para que outros respondam ou exporte a lista de confirmados.</p>
+                    </div>
+                    <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <ShareButton />
+                        <ExportButton submissions={submissions} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      }
+      
+      // --- De index.tsx ---
+      const rootElement = document.getElementById('root');
+      if (!rootElement) {
+        throw new Error("Could not find root element to mount to");
+      }
+      const root = ReactDOM.createRoot(rootElement);
+      root.render(
+        <React.StrictMode>
+          <App />
+        </React.StrictMode>
+      );
+    </script>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+{
+  "name": "Planejador de Jantar de Natal",
+  "description": "Um aplicativo para organizar um jantar de Natal, coletando RSVPs e usando a API Gemini para resumir os detalhes.",
+  "requestFramePermissions": []
+}
