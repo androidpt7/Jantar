@@ -18,12 +18,12 @@ const RestaurantPanel: React.FC = () => {
           {restaurantDescription}
         </p>
       </div>
-      <div className="flex gap-4">
+      <div className="flex flex-col gap-4">
         <a
           href={menuLink}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex-1 flex items-center justify-center gap-2 bg-yellow-500 text-gray-900 font-semibold py-3 px-4 rounded-lg transition duration-200 opacity-50 cursor-not-allowed"
+          className="flex items-center justify-center gap-2 bg-yellow-500 text-gray-900 font-semibold py-3 px-4 rounded-lg transition duration-200 opacity-50 cursor-not-allowed"
           aria-disabled="true"
           onClick={(e) => e.preventDefault()}
         >
@@ -34,7 +34,7 @@ const RestaurantPanel: React.FC = () => {
           href={addressLink}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex-1 flex items-center justify-center gap-2 bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 opacity-50 cursor-not-allowed"
+          className="flex items-center justify-center gap-2 bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 opacity-50 cursor-not-allowed"
           aria-disabled="true"
           onClick={(e) => e.preventDefault()}
         >
