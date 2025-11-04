@@ -1,5 +1,5 @@
 {
-  "name": "Planejador de Jantar de Natal",
-  "description": "Um aplicativo para organizar um jantar de Natal, coletando RSVPs e usando a API Gemini para resumir os detalhes.",
+  "name": "Jantar de Natal RSVP",
+  "description": "Uma aplicação simples para organizar e confirmar presenças para um jantar de Natal. Os utilizadores podem submeter a sua resposta, ver a lista de confirmados, e os organizadores podem partilhar o link ou exportar a lista.",
   "requestFramePermissions": []
 }

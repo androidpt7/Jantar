@@ -1,8 +1,6 @@
-
-export interface Submission {
-  id: number;
-  created_at: string;
+export interface RsvpResponse {
+  id?: string;
   name: string;
-  isAttending: boolean;
-  selectedDate: string | null;
+  attending: boolean;
+  created_at?: string;
 }
