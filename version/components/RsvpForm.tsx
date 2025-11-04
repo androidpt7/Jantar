@@ -62,7 +62,7 @@ const RsvpForm: React.FC<RsvpFormProps> = ({ onSubmit, findResponse }) => {
   return (
     <>
       <h2 className="text-2xl font-bold text-green-400 mb-6">Confirme a sua Presença</h2>
-      <form onSubmit={handleSubmit} className="flex flex-col flex-grow">
+      <form onSubmit={handleSubmit} className="flex flex-col">
         <div className="mb-6">
           <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
             Seu Nome
@@ -141,7 +141,7 @@ const RsvpForm: React.FC<RsvpFormProps> = ({ onSubmit, findResponse }) => {
 
         {error && <p className="text-red-400 text-sm mb-4 text-center">{error}</p>}
         
-        <div className="mt-auto">
+        <div className="mt-8">
           <button
             type="submit"
             disabled={isSubmitting}
