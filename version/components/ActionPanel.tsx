@@ -20,8 +20,8 @@ const ActionPanel: React.FC<ActionPanelProps> = ({ confirmedResponses }) => {
   const handleExport = () => {
     if (confirmedResponses.length === 0) return;
     const csvContent = "data:text/csv;charset=utf-8," 
-      + "Nome,Data Preferida\n" 
-      + confirmedResponses.map(r => `${r.name},${r.preferred_date}`).join("\n");
+      + "Nome,Data Preferida,Menu Preferido\n" 
+      + confirmedResponses.map(r => `${r.name},${r.preferred_date},${r.preferred_menu}`).join("\n");
     
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");

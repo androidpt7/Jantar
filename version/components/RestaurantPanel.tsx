@@ -2,12 +2,14 @@ import React from 'react';
 import MenuIcon from './icons/MenuIcon';
 import LocationIcon from './icons/LocationIcon';
 
-const RestaurantPanel: React.FC = () => {
-  // No futuro, estes valores podem vir de props ou de um estado
-  const restaurantName = "A ser anunciado";
-  const restaurantDescription = "Estamos a finalizar os detalhes do local perfeito para a nossa celebração. Fique atento!";
-  const menuLink = "#"; // Link provisório
-  const addressLink = "#"; // Link provisório para a morada
+interface RestaurantPanelProps {
+  onOpenMenu: () => void;
+}
+
+const RestaurantPanel: React.FC<RestaurantPanelProps> = ({ onOpenMenu }) => {
+  const restaurantName = "O Mercado";
+  const restaurantDescription = "Um espaço acolhedor com sabores autênticos, escolhido para a nossa celebração de Natal.";
+  const addressLink = "https://www.google.com/maps/search/?api=1&query=R.+Leão+de+Oliveira+-+Mercado+Rosa+Agulhas,+Loja+19+-+1300-350+Lisboa";
 
   return (
     <div className="bg-[#1f2937] p-6 rounded-2xl shadow-lg border border-gray-700">
@@ -19,24 +21,18 @@ const RestaurantPanel: React.FC = () => {
         </p>
       </div>
       <div className="flex flex-col gap-4">
-        <a
-          href={menuLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 bg-yellow-500 text-gray-900 font-semibold py-3 px-4 rounded-lg transition duration-200 opacity-50 cursor-not-allowed"
-          aria-disabled="true"
-          onClick={(e) => e.preventDefault()}
+        <button
+          onClick={onOpenMenu}
+          className="flex items-center justify-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-semibold py-3 px-4 rounded-lg transition duration-200"
         >
           <MenuIcon />
-          Ver Menu
-        </a>
+          Ver Menus
+        </button>
         <a
           href={addressLink}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 opacity-50 cursor-not-allowed"
-          aria-disabled="true"
-          onClick={(e) => e.preventDefault()}
+          className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200"
         >
           <LocationIcon />
           Ver Morada

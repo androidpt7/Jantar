@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { RsvpResponse } from '../types';
 
 interface RsvpFormProps {
-  onSubmit: (name: string, attending: boolean, preferredDate: string | null) => Promise<void>;
+  onSubmit: (name: string, attending: boolean, preferredDate: string | null, preferredMenu: string | null) => Promise<void>;
   findResponse: (name: string) => RsvpResponse | undefined;
 }
 
@@ -10,22 +10,27 @@ const RsvpForm: React.FC<RsvpFormProps> = ({ onSubmit, findResponse }) => {
   const [name, setName] = useState('');
   const [attending, setAttending] = useState<boolean | null>(null);
   const [preferredDate, setPreferredDate] = useState<string | null>(null);
+  const [preferredMenu, setPreferredMenu] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  
   const DATES = ['28 Nov', '5 Dez'];
+  const MENUS = ['Menu I', 'Menu II'];
 
   useEffect(() => {
     const existingResponse = findResponse(name);
     if (existingResponse) {
       setAttending(existingResponse.attending);
       setPreferredDate(existingResponse.preferred_date || null);
+      setPreferredMenu(existingResponse.preferred_menu || null);
       setIsEditing(true);
     } else {
       setIsEditing(false);
-      if (name) { // Only reset if name is being typed for a new user
+      if (name) { 
         setAttending(null);
         setPreferredDate(null);
+        setPreferredMenu(null);
       }
     }
   }, [name, findResponse]);
@@ -44,15 +49,17 @@ const RsvpForm: React.FC<RsvpFormProps> = ({ onSubmit, findResponse }) => {
       setError('Por favor, escolha uma data preferida.');
       return;
     }
+    if (attending && !preferredMenu) {
+      setError('Por favor, escolha um menu.');
+      return;
+    }
 
     setError(null);
     setIsSubmitting(true);
     
     try {
-      await onSubmit(name, attending, preferredDate);
-      // No need to clear form here, as the parent component will hide it
+      await onSubmit(name, attending, preferredDate, preferredMenu);
     } catch (err) {
-      // The parent component now displays a global error message.
       console.error("Submission failed:", err);
     } finally {
       setIsSubmitting(false);
@@ -102,7 +109,8 @@ const RsvpForm: React.FC<RsvpFormProps> = ({ onSubmit, findResponse }) => {
               type="button"
               onClick={() => {
                 setAttending(false);
-                setPreferredDate(null); // Not attending, so date is irrelevant
+                setPreferredDate(null);
+                setPreferredMenu(null);
               }}
               disabled={isSubmitting}
               className={`py-3 px-4 rounded-lg font-semibold transition duration-200 ${
@@ -117,31 +125,54 @@ const RsvpForm: React.FC<RsvpFormProps> = ({ onSubmit, findResponse }) => {
         </div>
 
         {attending && (
-          <div className="mb-8">
-            <span className="block text-sm font-medium text-gray-300 mb-2">Qual data prefere?</span>
-            <div className="grid grid-cols-2 gap-4">
-              {DATES.map(date => (
-                <button
-                  key={date}
-                  type="button"
-                  onClick={() => setPreferredDate(date)}
-                  disabled={isSubmitting}
-                  className={`py-3 px-4 rounded-lg font-semibold transition duration-200 ${
-                    preferredDate === date
-                      ? 'bg-yellow-500 text-gray-900 ring-2 ring-yellow-300'
-                      : 'bg-[#374151] text-gray-300 hover:bg-gray-600'
-                  } disabled:opacity-50`}
-                >
-                  {date}
-                </button>
-              ))}
+          <>
+            <div className="mb-6">
+              <span className="block text-sm font-medium text-gray-300 mb-2">Qual data prefere?</span>
+              <div className="grid grid-cols-2 gap-4">
+                {DATES.map(date => (
+                  <button
+                    key={date}
+                    type="button"
+                    onClick={() => setPreferredDate(date)}
+                    disabled={isSubmitting}
+                    className={`py-3 px-4 rounded-lg font-semibold transition duration-200 ${
+                      preferredDate === date
+                        ? 'bg-yellow-500 text-gray-900 ring-2 ring-yellow-300'
+                        : 'bg-[#374151] text-gray-300 hover:bg-gray-600'
+                    } disabled:opacity-50`}
+                  >
+                    {date}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+
+            <div className="mb-8">
+              <span className="block text-sm font-medium text-gray-300 mb-2">Qual menu prefere?</span>
+              <div className="grid grid-cols-2 gap-4">
+                {MENUS.map(menu => (
+                  <button
+                    key={menu}
+                    type="button"
+                    onClick={() => setPreferredMenu(menu)}
+                    disabled={isSubmitting}
+                    className={`py-3 px-4 rounded-lg font-semibold transition duration-200 ${
+                      preferredMenu === menu
+                        ? 'bg-yellow-500 text-gray-900 ring-2 ring-yellow-300'
+                        : 'bg-[#374151] text-gray-300 hover:bg-gray-600'
+                    } disabled:opacity-50`}
+                  >
+                    {menu}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </>
         )}
 
         {error && <p className="text-red-400 text-sm mb-4 text-center">{error}</p>}
         
-        <div className="mt-8">
+        <div className="mt-auto">
           <button
             type="submit"
             disabled={isSubmitting}

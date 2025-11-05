@@ -7,6 +7,7 @@ import ConfirmationModal from './components/ConfirmationModal';
 import RestaurantPanel from './components/RestaurantPanel';
 import AudioPlayer from './components/AudioPlayer';
 import VoteCounter from './components/VoteCounter';
+import MenuModal from './components/MenuModal';
 import { supabase } from './supabaseClient';
 
 const Snowflakes: React.FC = () => {
@@ -29,6 +30,7 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showMenuModal, setShowMenuModal] = useState(false);
 
   const fetchResponses = useCallback(async () => {
     setLoading(true);
@@ -50,10 +52,17 @@ const App: React.FC = () => {
     fetchResponses();
   }, [fetchResponses]);
 
-  const handleRsvpSubmit = useCallback(async (name: string, attending: boolean, preferredDate: string | null) => {
+  const handleRsvpSubmit = useCallback(async (name: string, attending: boolean, preferredDate: string | null, preferredMenu: string | null) => {
+    const payload = { 
+      name: name.trim(), 
+      attending, 
+      preferred_date: attending ? preferredDate : null,
+      preferred_menu: attending ? preferredMenu : null,
+    };
+
     const { error } = await supabase
       .from('rsvps')
-      .upsert({ name: name.trim(), attending, preferred_date: attending ? preferredDate : null }, { onConflict: 'name' });
+      .upsert(payload, { onConflict: 'name' });
     
     if (error) {
       console.error("Error submitting response:", error);
@@ -77,26 +86,37 @@ const App: React.FC = () => {
   const confirmedResponses = responses.filter(res => res.attending);
 
   // Calcula a contagem de votos para cada data
-  const voteCounts = confirmedResponses.reduce((acc, response) => {
+  const dateVoteCounts = confirmedResponses.reduce((acc, response) => {
     if (response.preferred_date) {
       acc[response.preferred_date] = (acc[response.preferred_date] || 0) + 1;
     }
     return acc;
   }, {} as { [date: string]: number });
 
-  // Garante que todas as datas possíveis são exibidas, mesmo com 0 votos
-  const DATES = ['28 Nov', '5 Dez'];
-  const initialCounts = DATES.reduce((acc, date) => {
-    acc[date] = 0;
+  // Calcula a contagem de votos para cada menu
+  const menuVoteCounts = confirmedResponses.reduce((acc, response) => {
+    if (response.preferred_menu) {
+      acc[response.preferred_menu] = (acc[response.preferred_menu] || 0) + 1;
+    }
     return acc;
-  }, {} as { [date: string]: number });
-  const finalVoteCounts = { ...initialCounts, ...voteCounts };
+  }, {} as { [menu: string]: number });
+
+  // Garante que todas as datas e menus possíveis são exibidos, mesmo com 0 votos
+  const DATES = ['28 Nov', '5 Dez'];
+  const MENUS = ['Menu I', 'Menu II'];
+  const initialDateCounts = DATES.reduce((acc, date) => ({ ...acc, [date]: 0 }), {} as { [date: string]: number });
+  const initialMenuCounts = MENUS.reduce((acc, menu) => ({ ...acc, [menu]: 0 }), {} as { [menu: string]: number });
+  
+  const finalDateVoteCounts = { ...initialDateCounts, ...dateVoteCounts };
+  const finalMenuVoteCounts = { ...initialMenuCounts, ...menuVoteCounts };
 
 
   return (
     <>
       <Snowflakes />
-      <VoteCounter counts={finalVoteCounts} />
+      <VoteCounter dateCounts={finalDateVoteCounts} menuCounts={finalMenuVoteCounts} />
+      <MenuModal show={showMenuModal} onClose={() => setShowMenuModal(false)} />
+      
       <div className="relative z-10 min-h-screen bg-transparent text-gray-200 flex flex-col items-center p-4 sm:p-6 md:p-8">
         <header className="text-center mb-8">
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-christmas">
@@ -122,7 +142,7 @@ const App: React.FC = () => {
             {error && <p className="text-red-400 text-center bg-[#1f2937] p-3 rounded-lg">{error}</p>}
             <ResponseList responses={responses} loading={loading} />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-              <RestaurantPanel />
+              <RestaurantPanel onOpenMenu={() => setShowMenuModal(true)} />
               <ActionPanel confirmedResponses={confirmedResponses} />
             </div>
           </div>
