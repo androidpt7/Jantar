@@ -103,7 +103,7 @@ const App: React.FC = () => {
 
   // Garante que todas as datas e menus possíveis são exibidos, mesmo com 0 votos
   const DATES = ['28 Nov', '5 Dez'];
-  const MENUS = ['Menu I', 'Menu II'];
+  const MENUS = ['Menu I - Prato 1', 'Menu I - Prato 2', 'Menu II - Prato 1', 'Menu II - Prato 2'];
   const initialDateCounts = DATES.reduce((acc, date) => ({ ...acc, [date]: 0 }), {} as { [date: string]: number });
   const initialMenuCounts = MENUS.reduce((acc, menu) => ({ ...acc, [menu]: 0 }), {} as { [menu: string]: number });
   

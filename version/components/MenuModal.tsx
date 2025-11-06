@@ -16,7 +16,7 @@ const MenuModal: React.FC<MenuModalProps> = ({ show, onClose }) => {
       onClick={onClose}
     >
       <div 
-        className="bg-[#1f2937] p-6 rounded-2xl shadow-2xl border border-gray-700 max-w-4xl w-full relative max-h-[90vh] overflow-y-auto"
+        className="bg-[#1f2937] p-6 rounded-2xl shadow-2xl border border-gray-700 max-w-2xl w-full relative max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()} // Impede que o clique dentro do modal o feche
       >
         <button 
@@ -29,18 +29,12 @@ const MenuModal: React.FC<MenuModalProps> = ({ show, onClose }) => {
           </svg>
         </button>
         
-        <h2 className="text-3xl font-bold text-green-400 mb-6 text-center">Menus de Natal</h2>
+        <h2 className="text-3xl font-bold text-green-400 mb-6 text-center">Menu de Natal</h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="flex flex-col items-center">
-            <h3 className="text-xl font-semibold text-yellow-400 mb-3">Menu I</h3>
-            <img src="/menu1.jpg" alt="Menu de Natal 1" className="rounded-lg shadow-md w-full" />
-          </div>
-          <div className="flex flex-col items-center">
-            <h3 className="text-xl font-semibold text-yellow-400 mb-3">Menu II</h3>
-            <img src="/menu2.jpg" alt="Menu de Natal 2" className="rounded-lg shadow-md w-full" />
-          </div>
+        <div className="flex flex-col items-center">
+          <img src="/menu.jpg" alt="Menu de Natal" className="rounded-lg shadow-md w-full" />
         </div>
+
         <p className="text-xs text-gray-500 text-center mt-6">
           * Para fechar, clique no 'X' ou em qualquer área fora desta janela.
         </p>

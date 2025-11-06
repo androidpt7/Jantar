@@ -56,7 +56,7 @@ const ResponseList: React.FC<ResponseListProps> = ({ responses, loading }) => {
                   <p className="text-sm text-gray-300 leading-snug">
                     Data: <strong>{response.preferred_date?.replace('Nov', 'de Nov.').replace('Dez', 'de Dez.')}</strong>
                     <br />
-                    Menu: <strong>{response.preferred_menu}</strong>
+                    Opção: <strong>{response.preferred_menu}</strong>
                   </p>
                 </div>
                 <span className="bg-green-500 text-white text-xs font-bold px-3 py-1.5 rounded-full whitespace-nowrap self-center">

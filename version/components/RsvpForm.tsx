@@ -16,7 +16,7 @@ const RsvpForm: React.FC<RsvpFormProps> = ({ onSubmit, findResponse }) => {
   const [isEditing, setIsEditing] = useState(false);
   
   const DATES = ['28 Nov', '5 Dez'];
-  const MENUS = ['Menu I', 'Menu II'];
+  const MENUS = ['Menu I - Prato 1', 'Menu I - Prato 2', 'Menu II - Prato 1', 'Menu II - Prato 2'];
 
   useEffect(() => {
     const existingResponse = findResponse(name);
@@ -148,7 +148,7 @@ const RsvpForm: React.FC<RsvpFormProps> = ({ onSubmit, findResponse }) => {
             </div>
 
             <div className="mb-8">
-              <span className="block text-sm font-medium text-gray-300 mb-2">Qual menu prefere?</span>
+              <span className="block text-sm font-medium text-gray-300 mb-2">Qual ementa e prato prefere?</span>
               <div className="grid grid-cols-2 gap-4">
                 {MENUS.map(menu => (
                   <button
@@ -156,7 +156,7 @@ const RsvpForm: React.FC<RsvpFormProps> = ({ onSubmit, findResponse }) => {
                     type="button"
                     onClick={() => setPreferredMenu(menu)}
                     disabled={isSubmitting}
-                    className={`py-3 px-4 rounded-lg font-semibold transition duration-200 ${
+                    className={`py-3 px-4 rounded-lg font-semibold transition duration-200 text-sm ${
                       preferredMenu === menu
                         ? 'bg-yellow-500 text-gray-900 ring-2 ring-yellow-300'
                         : 'bg-[#374151] text-gray-300 hover:bg-gray-600'
