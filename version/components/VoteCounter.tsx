@@ -28,7 +28,7 @@ const VoteCounter: React.FC<VoteCounterProps> = ({ dateCounts, menuCounts }) => 
       </div>
       <div>
         <h3 className="text-md font-bold text-green-400 mb-2 border-b border-gray-600 pb-2">
-          Votos por Menu
+          Votos por Ementa
         </h3>
         <ul className="space-y-1 pt-1">
           {menus.map(menu => (

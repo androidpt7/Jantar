@@ -16,7 +16,7 @@ const RsvpForm: React.FC<RsvpFormProps> = ({ onSubmit, findResponse }) => {
   const [isEditing, setIsEditing] = useState(false);
   
   const DATES = ['28 Nov', '5 Dez'];
-  const MENUS = ['Menu I - Prato 1', 'Menu I - Prato 2', 'Menu II - Prato 1', 'Menu II - Prato 2'];
+  const MENUS = ['Ementa 1', 'Ementa 2', 'Ementa 3', 'Ementa 4'];
 
   useEffect(() => {
     const existingResponse = findResponse(name);
@@ -50,7 +50,7 @@ const RsvpForm: React.FC<RsvpFormProps> = ({ onSubmit, findResponse }) => {
       return;
     }
     if (attending && !preferredMenu) {
-      setError('Por favor, escolha um menu.');
+      setError('Por favor, escolha uma ementa.');
       return;
     }
 
@@ -148,7 +148,7 @@ const RsvpForm: React.FC<RsvpFormProps> = ({ onSubmit, findResponse }) => {
             </div>
 
             <div className="mb-8">
-              <span className="block text-sm font-medium text-gray-300 mb-2">Qual ementa e prato prefere?</span>
+              <span className="block text-sm font-medium text-gray-300 mb-2">Qual ementa prefere?</span>
               <div className="grid grid-cols-2 gap-4">
                 {MENUS.map(menu => (
                   <button
