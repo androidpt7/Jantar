@@ -8,6 +8,7 @@ interface RestaurantPanelProps {
 
 const RestaurantPanel: React.FC<RestaurantPanelProps> = ({ onOpenMenu }) => {
   const restaurantName = "O Mercado";
+  const restaurantSite = "https://restauranteomercado.pt/";
   const restaurantDescription = "Um espaço acolhedor com sabores autênticos, escolhido para a nossa celebração de Natal.";
   const addressLink = "https://www.google.com/maps/search/?api=1&query=R.+Leão+de+Oliveira+-+Mercado+Rosa+Agulhas,+Loja+19+-+1300-350+Lisboa";
 
@@ -15,7 +16,16 @@ const RestaurantPanel: React.FC<RestaurantPanelProps> = ({ onOpenMenu }) => {
     <div className="bg-[#1f2937] p-6 rounded-2xl shadow-lg border border-gray-700">
       <h2 className="text-2xl font-bold text-green-400 mb-4">Local do Jantar</h2>
       <div className="mb-6">
-        <h3 className="text-xl font-semibold text-white mb-2">{restaurantName}</h3>
+        <h3 className="text-xl font-semibold text-white mb-2">
+          <a 
+            href={restaurantSite} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="hover:text-yellow-400 transition-colors duration-200 underline decoration-dotted underline-offset-4"
+          >
+            {restaurantName}
+          </a>
+        </h3>
         <p className="text-gray-400 text-sm">
           {restaurantDescription}
         </p>
