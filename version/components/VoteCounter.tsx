@@ -67,7 +67,7 @@ const VoteCounter: React.FC<VoteCounterProps> = ({ dateCounts, menuCounts }) => 
           ))}
         </ul>
          <div className="text-sm text-yellow-400 mt-4 text-center bg-yellow-900/40 p-2 rounded-lg border border-yellow-800/60">
-          <p>A ementa mais votada é que será considerada.</p>
+          <p>A ementa mais votada é a que será considerada.</p>
         </div>
       </div>
     </div>
