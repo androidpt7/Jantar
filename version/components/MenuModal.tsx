@@ -16,7 +16,7 @@ const MenuModal: React.FC<MenuModalProps> = ({ show, onClose }) => {
       onClick={onClose}
     >
       <div 
-        className="bg-[#1f2937] p-6 rounded-2xl shadow-2xl border border-gray-700 max-w-2xl w-full relative max-h-[90vh] overflow-y-auto"
+        className="bg-[#1f2937] p-6 rounded-2xl shadow-2xl border border-gray-700 max-w-5xl w-full relative max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()} // Impede que o clique dentro do modal o feche
       >
         <button 
