@@ -16,7 +16,7 @@ const RsvpForm: React.FC<RsvpFormProps> = ({ onSubmit, findResponse }) => {
   const [isEditing, setIsEditing] = useState(false);
   
   const DATES = ['28 Nov', '5 Dez'];
-  const MENUS = ['Ementa 1', 'Ementa 2', 'Ementa 3', 'Ementa 4'];
+  const MENUS = ['Ementa 1 / 1-Prato', 'Ementa 2 / 1-Prato'];
 
   useEffect(() => {
     const existingResponse = findResponse(name);

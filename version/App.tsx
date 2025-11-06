@@ -103,7 +103,7 @@ const App: React.FC = () => {
 
   // Garante que todas as datas e menus possíveis são exibidos, mesmo com 0 votos
   const DATES = ['28 Nov', '5 Dez'];
-  const MENUS = ['Ementa 1', 'Ementa 2', 'Ementa 3', 'Ementa 4'];
+  const MENUS = ['Ementa 1 / 1-Prato', 'Ementa 2 / 1-Prato'];
   const initialDateCounts = DATES.reduce((acc, date) => ({ ...acc, [date]: 0 }), {} as { [date: string]: number });
   const initialMenuCounts = MENUS.reduce((acc, menu) => ({ ...acc, [menu]: 0 }), {} as { [menu: string]: number });
   
@@ -125,7 +125,7 @@ const App: React.FC = () => {
             <span className="text-green-500">Natal</span>
           </h1>
           <p className="text-gray-400 mt-2 text-md sm:text-lg">
-            Vamos organizar nossa celebração! Por favor, preencha o formulário abaixo.
+            Vamos organizar a nossa celebração! Por favor, preencha o formulário abaixo.
           </p>
         </header>
 
