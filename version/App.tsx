@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { RsvpResponse } from './types';
 import RsvpForm from './components/RsvpForm';
@@ -83,6 +84,10 @@ const App: React.FC = () => {
     setShowConfirmation(false);
   };
 
+  const handleOpenGallery = () => {
+    window.open('https://www.icloud.com/photos/#/icloudlinks/07aTUH5yNheJEK7qdhqGMX9rw/', '_blank');
+  };
+
   const confirmedResponses = responses.filter(res => res.attending);
 
   // Calcula a contagem de votos para cada data
@@ -143,7 +148,10 @@ const App: React.FC = () => {
             <ResponseList responses={responses} loading={loading} />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
               <RestaurantPanel onOpenMenu={() => setShowMenuModal(true)} />
-              <ActionPanel confirmedResponses={confirmedResponses} />
+              <ActionPanel 
+                confirmedResponses={confirmedResponses} 
+                onOpenGallery={handleOpenGallery}
+              />
             </div>
           </div>
         </main>

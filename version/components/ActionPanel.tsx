@@ -1,13 +1,16 @@
+
 import React, { useState } from 'react';
 import ShareIcon from './icons/ShareIcon';
 import DownloadIcon from './icons/DownloadIcon';
+import CameraIcon from './icons/CameraIcon';
 import { RsvpResponse } from '../types';
 
 interface ActionPanelProps {
   confirmedResponses: RsvpResponse[];
+  onOpenGallery?: () => void;
 }
 
-const ActionPanel: React.FC<ActionPanelProps> = ({ confirmedResponses }) => {
+const ActionPanel: React.FC<ActionPanelProps> = ({ confirmedResponses, onOpenGallery }) => {
   const [shareText, setShareText] = useState('Partilhar Link');
 
   const handleShare = () => {
@@ -36,9 +39,18 @@ const ActionPanel: React.FC<ActionPanelProps> = ({ confirmedResponses }) => {
     <div className="bg-[#1f2937] p-6 rounded-2xl shadow-lg border border-gray-700">
       <h2 className="text-2xl font-bold text-green-400 mb-4">Ações do Painel</h2>
       <p className="text-gray-400 mb-6 text-sm">
-        Partilhe o link para que outros respondam ou exporte a lista de confirmados.
+        Partilhe o link, veja as fotos do evento ou exporte a lista.
       </p>
       <div className="flex flex-col gap-4">
+        {onOpenGallery && (
+          <button
+            onClick={onOpenGallery}
+            className="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 border border-purple-500 hover:border-purple-400 shadow-lg shadow-purple-900/20"
+          >
+            <CameraIcon />
+            Ver Fotos do Jantar
+          </button>
+        )}
         <button
           onClick={handleShare}
           className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200"
