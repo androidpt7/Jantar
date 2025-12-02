@@ -85,7 +85,7 @@ const App: React.FC = () => {
   };
 
   const handleOpenGallery = () => {
-    window.open('https://www.icloud.com/photos/#/icloudlinks/07aTUH5yNheJEK7qdhqGMX9rw/', '_blank');
+    window.open('https://www.icloud.com/photos/#/icloudlinks/0a9svpreX5R-twygH24j6h8yA/', '_blank');
   };
 
   const confirmedResponses = responses.filter(res => res.attending);
