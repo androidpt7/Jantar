@@ -7,10 +7,11 @@ interface RestaurantPanelProps {
 }
 
 const RestaurantPanel: React.FC<RestaurantPanelProps> = ({ onOpenMenu }) => {
-  const restaurantName = "O Mercado";
-  const restaurantSite = "https://restauranteomercado.pt/";
+  const restaurantName = "O Vareiro";
+  const restaurantSite = "https://ovareiro.site/";
   const restaurantDescription = "Um espaço acolhedor com sabores autênticos, escolhido para a nossa celebração de Natal.";
-  const addressLink = "https://www.google.com/maps/search/?api=1&query=R.+Leão+de+Oliveira+-+Mercado+Rosa+Agulhas,+Loja+19+-+1300-350+Lisboa";
+  const restaurantAddress = "Rua do Conde de Redondo 2D, 1150-105 Lisboa";
+  const addressLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(restaurantAddress)}`;
 
   return (
     <div className="bg-[#1f2937] p-6 rounded-2xl shadow-lg border border-gray-700">
@@ -28,6 +29,8 @@ const RestaurantPanel: React.FC<RestaurantPanelProps> = ({ onOpenMenu }) => {
         </h3>
         <p className="text-gray-400 text-sm">
           {restaurantDescription}
+          <br />
+          {restaurantAddress}.
         </p>
       </div>
       <div className="flex flex-col gap-4">

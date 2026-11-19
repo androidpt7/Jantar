@@ -54,9 +54,13 @@ const ResponseList: React.FC<ResponseListProps> = ({ responses, loading }) => {
                 <div>
                   <p className="text-lg font-bold text-white">{response.name}</p>
                   <p className="text-sm text-gray-300 leading-snug">
-                    Data: <strong>{response.preferred_date?.replace('Nov', 'de Nov.').replace('Dez', 'de Dez.')}</strong>
-                    <br />
-                    Opção: <strong>{response.preferred_menu}</strong>
+                    Menu: <strong>{response.preferred_menu}</strong>
+                    {response.preferred_dish && (
+                      <>
+                        <br />
+                        Prato: <strong>{response.preferred_dish}</strong>
+                      </>
+                    )}
                   </p>
                 </div>
                 <span className="bg-green-500 text-white text-xs font-bold px-3 py-1.5 rounded-full whitespace-nowrap self-center">

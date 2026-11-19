@@ -8,8 +8,10 @@ import ConfirmationModal from './components/ConfirmationModal';
 import RestaurantPanel from './components/RestaurantPanel';
 import AudioPlayer from './components/AudioPlayer';
 import VoteCounter from './components/VoteCounter';
+import DishCounter from './components/DishCounter';
 import MenuModal from './components/MenuModal';
 import { supabase } from './supabaseClient';
+import { DINNER_DATE, DINNER_DATE_LABEL, MENUS } from './constants';
 
 const Snowflakes: React.FC = () => {
   const flakes = Array.from({ length: 50 }).map((_, i) => {
@@ -53,28 +55,31 @@ const App: React.FC = () => {
     fetchResponses();
   }, [fetchResponses]);
 
-  const handleRsvpSubmit = useCallback(async (name: string, attending: boolean, preferredDate: string | null, preferredMenu: string | null) => {
-    const payload = { 
-      name: name.trim(), 
-      attending, 
-      preferred_date: attending ? preferredDate : null,
+  const handleRsvpSubmit = useCallback(async (name: string, attending: boolean, preferredMenu: string | null, preferredDish: string | null) => {
+    // Se já existir uma resposta com este nome (ignorando maiúsculas), atualiza essa em vez de criar duplicado
+    const existing = responses.find(res => res.name.toLowerCase() === name.trim().toLowerCase());
+    const payload = {
+      name: existing ? existing.name : name.trim(),
+      attending,
+      preferred_date: attending ? DINNER_DATE : null,
       preferred_menu: attending ? preferredMenu : null,
+      preferred_dish: attending ? preferredDish : null,
     };
 
     const { error } = await supabase
       .from('rsvps')
       .upsert(payload, { onConflict: 'name' });
-    
+
     if (error) {
       console.error("Error submitting response:", error);
-      setError("Ocorreu um erro ao enviar sua resposta. Por favor, tente novamente.");
-      throw error; // Propagate error to form
+      setError("Ocorreu um erro ao enviar a sua resposta. Por favor, tente novamente.");
+      throw error; // Propaga o erro para o formulário
     } else {
-      setError(null); // Clear previous errors on success
-      await fetchResponses(); // Refresh list after successful submission
-      setShowConfirmation(true); // Show confirmation modal
+      setError(null);
+      await fetchResponses();
+      setShowConfirmation(true);
     }
-  }, [fetchResponses]);
+  }, [fetchResponses, responses]);
 
   const findResponseByName = useCallback((name: string): RsvpResponse | undefined => {
     return responses.find(res => res.name.toLowerCase() === name.toLowerCase());
@@ -90,40 +95,20 @@ const App: React.FC = () => {
 
   const confirmedResponses = responses.filter(res => res.attending);
 
-  // Calcula a contagem de votos para cada data
-  const dateVoteCounts = confirmedResponses.reduce((acc, response) => {
-    if (response.preferred_date) {
-      acc[response.preferred_date] = (acc[response.preferred_date] || 0) + 1;
-    }
-    return acc;
-  }, {} as { [date: string]: number });
-
-  // Calcula a contagem de votos para cada menu
-  const menuVoteCounts = confirmedResponses.reduce((acc, response) => {
-    if (response.preferred_menu) {
-      acc[response.preferred_menu] = (acc[response.preferred_menu] || 0) + 1;
-    }
+  // Votos por ementa (todas as ementas aparecem, mesmo com 0 votos)
+  const menuVoteCounts = MENUS.reduce((acc, menu) => {
+    acc[menu.name] = confirmedResponses.filter(res => res.preferred_menu === menu.name).length;
     return acc;
   }, {} as { [menu: string]: number });
-
-  // Garante que todas as datas e menus possíveis são exibidos, mesmo com 0 votos
-  const DATES = ['28 Nov', '5 Dez'];
-  const MENUS = ['Ementa 1 / 1-Prato', 'Ementa 2 / 1-Prato'];
-  const initialDateCounts = DATES.reduce((acc, date) => ({ ...acc, [date]: 0 }), {} as { [date: string]: number });
-  const initialMenuCounts = MENUS.reduce((acc, menu) => ({ ...acc, [menu]: 0 }), {} as { [menu: string]: number });
-  
-  const finalDateVoteCounts = { ...initialDateCounts, ...dateVoteCounts };
-  const finalMenuVoteCounts = { ...initialMenuCounts, ...menuVoteCounts };
-
 
   return (
     <>
       <Snowflakes />
-      <VoteCounter dateCounts={finalDateVoteCounts} menuCounts={finalMenuVoteCounts} />
+      <VoteCounter menuCounts={menuVoteCounts} />
       <MenuModal show={showMenuModal} onClose={() => setShowMenuModal(false)} />
       
       <div className="relative z-10 min-h-screen bg-transparent text-gray-200 flex flex-col items-center p-4 sm:p-6 md:p-8">
-        <header className="text-center mb-8">
+        <header className="text-center mb-8 mt-40 sm:mt-0">
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-christmas">
             <span className="text-red-500">Jantar</span>
             <span className="text-white mx-2"> de </span>
@@ -131,6 +116,9 @@ const App: React.FC = () => {
           </h1>
           <p className="text-gray-400 mt-2 text-md sm:text-lg">
             Vamos organizar a nossa celebração! Por favor, preencha o formulário abaixo.
+          </p>
+          <p className="inline-block mt-4 bg-yellow-500 text-gray-900 font-bold px-5 py-2 rounded-full">
+            📅 Dia {DINNER_DATE_LABEL}
           </p>
         </header>
 
@@ -146,6 +134,7 @@ const App: React.FC = () => {
           <div className="flex flex-col gap-8">
             {error && <p className="text-red-400 text-center bg-[#1f2937] p-3 rounded-lg">{error}</p>}
             <ResponseList responses={responses} loading={loading} />
+            <DishCounter confirmedResponses={confirmedResponses} />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
               <RestaurantPanel onOpenMenu={() => setShowMenuModal(true)} />
               <ActionPanel 

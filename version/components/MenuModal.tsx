@@ -29,10 +29,10 @@ const MenuModal: React.FC<MenuModalProps> = ({ show, onClose }) => {
           </svg>
         </button>
         
-        <h2 className="text-3xl font-bold text-green-400 mb-6 text-center">Menu de Natal</h2>
+        <h2 className="text-3xl font-bold text-green-400 mb-6 text-center">Menus de Grupo</h2>
         
         <div className="flex flex-col items-center">
-          <img src="/menu.jpg" alt="Menu de Natal" className="rounded-lg shadow-md w-full" />
+          <img src="/menu.jpg" alt="Menus de Grupo - O Vareiro" className="rounded-lg shadow-md w-full" />
         </div>
 
         <p className="text-xs text-gray-500 text-center mt-6">

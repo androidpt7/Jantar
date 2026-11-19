@@ -22,17 +22,20 @@ const ActionPanel: React.FC<ActionPanelProps> = ({ confirmedResponses, onOpenGal
 
   const handleExport = () => {
     if (confirmedResponses.length === 0) return;
-    const csvContent = "data:text/csv;charset=utf-8," 
-      + "Nome,Data Preferida,Menu Preferido\n" 
-      + confirmedResponses.map(r => `${r.name},${r.preferred_date},${r.preferred_menu}`).join("\n");
-    
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "lista_confirmados_jantar_natal.csv");
+    const escape = (value: string | null | undefined) => `"${(value ?? '').replace(/"/g, '""')}"`;
+    const rows = confirmedResponses.map(r =>
+      [r.name, r.preferred_date, r.preferred_menu, r.preferred_dish].map(escape).join(',')
+    );
+    const csvContent = '\uFEFF' + ['Nome,Data,Menu,Prato', ...rows].join('\n');
+
+    const url = URL.createObjectURL(new Blob([csvContent], { type: 'text/csv;charset=utf-8' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'lista_confirmados_jantar_natal.csv';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   return (
